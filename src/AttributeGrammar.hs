@@ -9,7 +9,7 @@ import qualified Data.Maybe as Maybe
 import qualified Data.List as L
 {-# LINE 11 "AttributeGrammar.hs" #-}
 
-{-# LINE 181 "AttributeGrammar.ag" #-}
+{-# LINE 244 "AttributeGrammar.ag" #-}
 
 indent :: [String] -> [String]
 indent = map ("  " ++)
@@ -31,7 +31,7 @@ addSemicolon [] = []
 addSemicolon xs = init xs ++ [last xs ++ ";"]
 {-# LINE 33 "AttributeGrammar.hs" #-}
 
-{-# LINE 276 "AttributeGrammar.ag" #-}
+{-# LINE 339 "AttributeGrammar.ag" #-}
 
 parensIf :: Bool -> String -> String
 parensIf False str = str
@@ -91,12 +91,12 @@ sem_BExpr_BConst val_ =
     (let _lhsOpretty :: String
          _lhsOprecedence :: Int
          _lhsOpretty =
-             ({-# LINE 307 "AttributeGrammar.ag" #-}
+             ({-# LINE 370 "AttributeGrammar.ag" #-}
               show val_
               {-# LINE 97 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 308 "AttributeGrammar.ag" #-}
+             ({-# LINE 371 "AttributeGrammar.ag" #-}
               10
               {-# LINE 102 "AttributeGrammar.hs" #-}
               )
@@ -107,12 +107,12 @@ sem_BExpr_BVar name_ =
     (let _lhsOpretty :: String
          _lhsOprecedence :: Int
          _lhsOpretty =
-             ({-# LINE 310 "AttributeGrammar.ag" #-}
+             ({-# LINE 373 "AttributeGrammar.ag" #-}
               name_
               {-# LINE 113 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 311 "AttributeGrammar.ag" #-}
+             ({-# LINE 374 "AttributeGrammar.ag" #-}
               10
               {-# LINE 118 "AttributeGrammar.hs" #-}
               )
@@ -128,12 +128,12 @@ sem_BExpr_LessThan left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 313 "AttributeGrammar.ag" #-}
+             ({-# LINE 376 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence <= 4) _leftIpretty ++ " < " ++ parensIf (_rightIprecedence <= 4) _rightIpretty
               {-# LINE 134 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 314 "AttributeGrammar.ag" #-}
+             ({-# LINE 377 "AttributeGrammar.ag" #-}
               4
               {-# LINE 139 "AttributeGrammar.hs" #-}
               )
@@ -153,12 +153,12 @@ sem_BExpr_GreaterThan left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 316 "AttributeGrammar.ag" #-}
+             ({-# LINE 379 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence <= 4) _leftIpretty ++ " > " ++ parensIf (_rightIprecedence <= 4) _rightIpretty
               {-# LINE 159 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 317 "AttributeGrammar.ag" #-}
+             ({-# LINE 380 "AttributeGrammar.ag" #-}
               4
               {-# LINE 164 "AttributeGrammar.hs" #-}
               )
@@ -178,12 +178,12 @@ sem_BExpr_LessEqual left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 319 "AttributeGrammar.ag" #-}
+             ({-# LINE 382 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence <= 4) _leftIpretty ++ " <= " ++ parensIf (_rightIprecedence <= 4) _rightIpretty
               {-# LINE 184 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 320 "AttributeGrammar.ag" #-}
+             ({-# LINE 383 "AttributeGrammar.ag" #-}
               4
               {-# LINE 189 "AttributeGrammar.hs" #-}
               )
@@ -203,12 +203,12 @@ sem_BExpr_GreaterEqual left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 322 "AttributeGrammar.ag" #-}
+             ({-# LINE 385 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence <= 4) _leftIpretty ++ " >= " ++ parensIf (_rightIprecedence <= 4) _rightIpretty
               {-# LINE 209 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 323 "AttributeGrammar.ag" #-}
+             ({-# LINE 386 "AttributeGrammar.ag" #-}
               4
               {-# LINE 214 "AttributeGrammar.hs" #-}
               )
@@ -228,12 +228,12 @@ sem_BExpr_IEqual left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 325 "AttributeGrammar.ag" #-}
+             ({-# LINE 388 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence <= 4) _leftIpretty ++ " == " ++ parensIf (_rightIprecedence <= 4) _rightIpretty
               {-# LINE 234 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 326 "AttributeGrammar.ag" #-}
+             ({-# LINE 389 "AttributeGrammar.ag" #-}
               4
               {-# LINE 239 "AttributeGrammar.hs" #-}
               )
@@ -253,12 +253,12 @@ sem_BExpr_BEqual left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 328 "AttributeGrammar.ag" #-}
+             ({-# LINE 391 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence <= 4) _leftIpretty ++ " == " ++ parensIf (_rightIprecedence <= 4) _rightIpretty
               {-# LINE 259 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 329 "AttributeGrammar.ag" #-}
+             ({-# LINE 392 "AttributeGrammar.ag" #-}
               4
               {-# LINE 264 "AttributeGrammar.hs" #-}
               )
@@ -278,12 +278,12 @@ sem_BExpr_And left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 331 "AttributeGrammar.ag" #-}
+             ({-# LINE 394 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence < 3) _leftIpretty ++ " && " ++ parensIf (_rightIprecedence < 3) _rightIpretty
               {-# LINE 284 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 332 "AttributeGrammar.ag" #-}
+             ({-# LINE 395 "AttributeGrammar.ag" #-}
               3
               {-# LINE 289 "AttributeGrammar.hs" #-}
               )
@@ -303,12 +303,12 @@ sem_BExpr_Or left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 334 "AttributeGrammar.ag" #-}
+             ({-# LINE 397 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence < 2) _leftIpretty ++ " || " ++ parensIf (_rightIprecedence < 2) _rightIpretty
               {-# LINE 309 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 335 "AttributeGrammar.ag" #-}
+             ({-# LINE 398 "AttributeGrammar.ag" #-}
               2
               {-# LINE 314 "AttributeGrammar.hs" #-}
               )
@@ -325,12 +325,12 @@ sem_BExpr_Not val_ =
          _valIprecedence :: Int
          _valIpretty :: String
          _lhsOpretty =
-             ({-# LINE 337 "AttributeGrammar.ag" #-}
+             ({-# LINE 400 "AttributeGrammar.ag" #-}
               "not " ++ parensIf (_valIprecedence < 10) _valIpretty
               {-# LINE 331 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 338 "AttributeGrammar.ag" #-}
+             ({-# LINE 401 "AttributeGrammar.ag" #-}
               10
               {-# LINE 336 "AttributeGrammar.hs" #-}
               )
@@ -385,24 +385,27 @@ sem_Code_CIExpr iExpr_ =
 sem_Code_CStat :: (T_Stat') ->
                   T_Code
 sem_Code_CStat stat'_ =
-    (let _stat'IisSingle :: Bool
+    (let _stat'Iinit :: Int
+         _stat'IisSingle :: Bool
          _stat'IisSkip :: Bool
          _stat'Ipretty :: ( [String] )
-         ( _stat'IisSingle,_stat'IisSkip,_stat'Ipretty) =
+         ( _stat'Iinit,_stat'IisSingle,_stat'IisSkip,_stat'Ipretty) =
              stat'_
      in  ( ))
 sem_Code_CProc :: (T_Proc') ->
                   T_Code
 sem_Code_CProc proc'_ =
-    (let _proc'Ipretty :: ( [String] )
-         ( _proc'Ipretty) =
+    (let _proc'Iinit :: Int
+         _proc'Ipretty :: ( [String] )
+         ( _proc'Iinit,_proc'Ipretty) =
              proc'_
      in  ( ))
 sem_Code_CProgram :: (T_Program') ->
                      T_Code
 sem_Code_CProgram program'_ =
-    (let _program'Ipretty :: String
-         ( _program'Ipretty) =
+    (let _program'Iinit :: Int
+         _program'Ipretty :: String
+         ( _program'Iinit,_program'Ipretty) =
              program'_
      in  ( ))
 -- Expr --------------------------------------------------------
@@ -433,9 +436,9 @@ sem_Expr_B expr_ =
          _exprIprecedence :: Int
          _exprIpretty :: String
          _lhsOpretty =
-             ({-# LINE 342 "AttributeGrammar.ag" #-}
+             ({-# LINE 405 "AttributeGrammar.ag" #-}
               _exprIpretty
-              {-# LINE 439 "AttributeGrammar.hs" #-}
+              {-# LINE 442 "AttributeGrammar.hs" #-}
               )
          ( _exprIprecedence,_exprIpretty) =
              expr_
@@ -447,9 +450,9 @@ sem_Expr_I expr_ =
          _exprIprecedence :: Int
          _exprIpretty :: String
          _lhsOpretty =
-             ({-# LINE 344 "AttributeGrammar.ag" #-}
+             ({-# LINE 407 "AttributeGrammar.ag" #-}
               _exprIpretty
-              {-# LINE 453 "AttributeGrammar.hs" #-}
+              {-# LINE 456 "AttributeGrammar.hs" #-}
               )
          ( _exprIprecedence,_exprIpretty) =
              expr_
@@ -479,9 +482,9 @@ sem_Exprs_Cons hd_ tl_ =
          _hdIpretty :: String
          _tlIpretty :: String
          _lhsOpretty =
-             ({-# LINE 350 "AttributeGrammar.ag" #-}
+             ({-# LINE 413 "AttributeGrammar.ag" #-}
               _hdIpretty ++ ", " ++ _tlIpretty
-              {-# LINE 485 "AttributeGrammar.hs" #-}
+              {-# LINE 488 "AttributeGrammar.hs" #-}
               )
          ( _hdIpretty) =
              hd_
@@ -492,9 +495,9 @@ sem_Exprs_Nil :: T_Exprs
 sem_Exprs_Nil =
     (let _lhsOpretty :: String
          _lhsOpretty =
-             ({-# LINE 348 "AttributeGrammar.ag" #-}
+             ({-# LINE 411 "AttributeGrammar.ag" #-}
               ""
-              {-# LINE 498 "AttributeGrammar.hs" #-}
+              {-# LINE 501 "AttributeGrammar.hs" #-}
               )
      in  ( _lhsOpretty))
 -- IExpr -------------------------------------------------------
@@ -539,14 +542,14 @@ sem_IExpr_IConst val_ =
     (let _lhsOpretty :: String
          _lhsOprecedence :: Int
          _lhsOpretty =
-             ({-# LINE 284 "AttributeGrammar.ag" #-}
+             ({-# LINE 347 "AttributeGrammar.ag" #-}
               show val_
-              {-# LINE 545 "AttributeGrammar.hs" #-}
+              {-# LINE 548 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 285 "AttributeGrammar.ag" #-}
+             ({-# LINE 348 "AttributeGrammar.ag" #-}
               10
-              {-# LINE 550 "AttributeGrammar.hs" #-}
+              {-# LINE 553 "AttributeGrammar.hs" #-}
               )
      in  ( _lhsOprecedence,_lhsOpretty))
 sem_IExpr_Var :: String ->
@@ -555,14 +558,14 @@ sem_IExpr_Var name_ =
     (let _lhsOpretty :: String
          _lhsOprecedence :: Int
          _lhsOpretty =
-             ({-# LINE 287 "AttributeGrammar.ag" #-}
+             ({-# LINE 350 "AttributeGrammar.ag" #-}
               name_
-              {-# LINE 561 "AttributeGrammar.hs" #-}
+              {-# LINE 564 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 288 "AttributeGrammar.ag" #-}
+             ({-# LINE 351 "AttributeGrammar.ag" #-}
               10
-              {-# LINE 566 "AttributeGrammar.hs" #-}
+              {-# LINE 569 "AttributeGrammar.hs" #-}
               )
      in  ( _lhsOprecedence,_lhsOpretty))
 sem_IExpr_Plus :: T_IExpr ->
@@ -576,14 +579,14 @@ sem_IExpr_Plus left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 290 "AttributeGrammar.ag" #-}
+             ({-# LINE 353 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence < 6) _leftIpretty ++ " + " ++ parensIf (_rightIprecedence <= 6) _rightIpretty
-              {-# LINE 582 "AttributeGrammar.hs" #-}
+              {-# LINE 585 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 291 "AttributeGrammar.ag" #-}
+             ({-# LINE 354 "AttributeGrammar.ag" #-}
               6
-              {-# LINE 587 "AttributeGrammar.hs" #-}
+              {-# LINE 590 "AttributeGrammar.hs" #-}
               )
          ( _leftIprecedence,_leftIpretty) =
              left_
@@ -601,14 +604,14 @@ sem_IExpr_Minus left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 293 "AttributeGrammar.ag" #-}
+             ({-# LINE 356 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence < 6) _leftIpretty ++ " - " ++ parensIf (_rightIprecedence <= 6) _rightIpretty
-              {-# LINE 607 "AttributeGrammar.hs" #-}
+              {-# LINE 610 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 294 "AttributeGrammar.ag" #-}
+             ({-# LINE 357 "AttributeGrammar.ag" #-}
               6
-              {-# LINE 612 "AttributeGrammar.hs" #-}
+              {-# LINE 615 "AttributeGrammar.hs" #-}
               )
          ( _leftIprecedence,_leftIpretty) =
              left_
@@ -626,14 +629,14 @@ sem_IExpr_Times left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 296 "AttributeGrammar.ag" #-}
+             ({-# LINE 359 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence < 7) _leftIpretty ++ " * " ++ parensIf (_rightIprecedence <= 7) _rightIpretty
-              {-# LINE 632 "AttributeGrammar.hs" #-}
+              {-# LINE 635 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 297 "AttributeGrammar.ag" #-}
+             ({-# LINE 360 "AttributeGrammar.ag" #-}
               7
-              {-# LINE 637 "AttributeGrammar.hs" #-}
+              {-# LINE 640 "AttributeGrammar.hs" #-}
               )
          ( _leftIprecedence,_leftIpretty) =
              left_
@@ -651,14 +654,14 @@ sem_IExpr_Divide left_ right_ =
          _rightIprecedence :: Int
          _rightIpretty :: String
          _lhsOpretty =
-             ({-# LINE 299 "AttributeGrammar.ag" #-}
+             ({-# LINE 362 "AttributeGrammar.ag" #-}
               parensIf (_leftIprecedence < 7) _leftIpretty ++ " / " ++ parensIf (_rightIprecedence <= 7) _rightIpretty
-              {-# LINE 657 "AttributeGrammar.hs" #-}
+              {-# LINE 660 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 300 "AttributeGrammar.ag" #-}
+             ({-# LINE 363 "AttributeGrammar.ag" #-}
               7
-              {-# LINE 662 "AttributeGrammar.hs" #-}
+              {-# LINE 665 "AttributeGrammar.hs" #-}
               )
          ( _leftIprecedence,_leftIpretty) =
              left_
@@ -673,14 +676,14 @@ sem_IExpr_Deref ptr_ =
          _ptrIprecedence :: Int
          _ptrIpretty :: String
          _lhsOpretty =
-             ({-# LINE 302 "AttributeGrammar.ag" #-}
+             ({-# LINE 365 "AttributeGrammar.ag" #-}
               "*" ++ parensIf (_ptrIprecedence < 10) _ptrIpretty
-              {-# LINE 679 "AttributeGrammar.hs" #-}
+              {-# LINE 682 "AttributeGrammar.hs" #-}
               )
          _lhsOprecedence =
-             ({-# LINE 303 "AttributeGrammar.ag" #-}
+             ({-# LINE 366 "AttributeGrammar.ag" #-}
               10
-              {-# LINE 684 "AttributeGrammar.hs" #-}
+              {-# LINE 687 "AttributeGrammar.hs" #-}
               )
          ( _ptrIprecedence,_ptrIpretty) =
              ptr_
@@ -717,19 +720,19 @@ sem_Proc_Proc name_ inp_ out_ stat_ =
               _statIlabel :: Int
               _statIlabelled :: Stat'
               _statOlabel =
-                  ({-# LINE 117 "AttributeGrammar.ag" #-}
+                  ({-# LINE 180 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 723 "AttributeGrammar.hs" #-}
+                   {-# LINE 726 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 118 "AttributeGrammar.ag" #-}
+                  ({-# LINE 181 "AttributeGrammar.ag" #-}
                    Proc' _lhsIlabel _statIlabel name_ inp_ out_ _statIlabelled
-                   {-# LINE 728 "AttributeGrammar.hs" #-}
+                   {-# LINE 731 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabel =
-                  ({-# LINE 119 "AttributeGrammar.ag" #-}
+                  ({-# LINE 182 "AttributeGrammar.ag" #-}
                    _statIlabel + 1
-                   {-# LINE 733 "AttributeGrammar.hs" #-}
+                   {-# LINE 736 "AttributeGrammar.hs" #-}
                    )
               ( _statIlabel,_statIlabelled) =
                   stat_ _statOlabel
@@ -743,15 +746,15 @@ sem_Proc' :: (Proc') ->
 sem_Proc' (Proc' _labelEntry _labelReturn _name _inp _out _stat) =
     (sem_Proc'_Proc' _labelEntry _labelReturn _name _inp _out (sem_Stat' _stat))
 -- semantic domain
-type T_Proc' = ( ( [String] ))
+type T_Proc' = ( Int,( [String] ))
 data Inh_Proc' = Inh_Proc' {}
-data Syn_Proc' = Syn_Proc' {pretty_Syn_Proc' :: ( [String] )}
+data Syn_Proc' = Syn_Proc' {init_Syn_Proc' :: Int,pretty_Syn_Proc' :: ( [String] )}
 wrap_Proc' :: (T_Proc') ->
               (Inh_Proc') ->
               (Syn_Proc')
 wrap_Proc' sem (Inh_Proc') =
-    (let ( _lhsOpretty) = sem
-     in  (Syn_Proc' _lhsOpretty))
+    (let ( _lhsOinit,_lhsOpretty) = sem
+     in  (Syn_Proc' _lhsOinit _lhsOpretty))
 sem_Proc'_Proc' :: Int ->
                    Int ->
                    String ->
@@ -760,20 +763,27 @@ sem_Proc'_Proc' :: Int ->
                    (T_Stat') ->
                    (T_Proc')
 sem_Proc'_Proc' labelEntry_ labelReturn_ name_ inp_ out_ stat_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
+         _statIinit :: Int
          _statIisSingle :: Bool
          _statIisSkip :: Bool
          _statIpretty :: ( [String] )
+         _lhsOinit =
+             ({-# LINE 106 "AttributeGrammar.ag" #-}
+              labelEntry_
+              {-# LINE 776 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 214 "AttributeGrammar.ag" #-}
+             ({-# LINE 277 "AttributeGrammar.ag" #-}
               ["proc " ++ name_ ++ "(val " ++ (inp_ >>= (++ ", ")) ++ "out " ++ out_ ++ ") is" ++ showLabel labelEntry_]
                ++ indent _statIpretty
                ++ ["end" ++ showLabel labelReturn_ ++ ";"]
-              {-# LINE 773 "AttributeGrammar.hs" #-}
+              {-# LINE 783 "AttributeGrammar.hs" #-}
               )
-         ( _statIisSingle,_statIisSkip,_statIpretty) =
+         ( _statIinit,_statIisSingle,_statIisSkip,_statIpretty) =
              stat_
-     in  ( _lhsOpretty))
+     in  ( _lhsOinit,_lhsOpretty))
 -- Procs -------------------------------------------------------
 type Procs = [Proc]
 -- cata
@@ -806,24 +816,24 @@ sem_Procs_Cons hd_ tl_ =
               _tlIlabel :: Int
               _tlIlabelled :: Procs'
               _lhsOlabelled =
-                  ({-# LINE 113 "AttributeGrammar.ag" #-}
+                  ({-# LINE 176 "AttributeGrammar.ag" #-}
                    _hdIlabelled : _tlIlabelled
-                   {-# LINE 812 "AttributeGrammar.hs" #-}
-                   )
-              _lhsOlabel =
-                  ({-# LINE 96 "AttributeGrammar.ag" #-}
-                   _tlIlabel
-                   {-# LINE 817 "AttributeGrammar.hs" #-}
-                   )
-              _hdOlabel =
-                  ({-# LINE 96 "AttributeGrammar.ag" #-}
-                   _lhsIlabel
                    {-# LINE 822 "AttributeGrammar.hs" #-}
                    )
-              _tlOlabel =
-                  ({-# LINE 96 "AttributeGrammar.ag" #-}
-                   _hdIlabel
+              _lhsOlabel =
+                  ({-# LINE 159 "AttributeGrammar.ag" #-}
+                   _tlIlabel
                    {-# LINE 827 "AttributeGrammar.hs" #-}
+                   )
+              _hdOlabel =
+                  ({-# LINE 159 "AttributeGrammar.ag" #-}
+                   _lhsIlabel
+                   {-# LINE 832 "AttributeGrammar.hs" #-}
+                   )
+              _tlOlabel =
+                  ({-# LINE 159 "AttributeGrammar.ag" #-}
+                   _hdIlabel
+                   {-# LINE 837 "AttributeGrammar.hs" #-}
                    )
               ( _hdIlabel,_hdIlabelled) =
                   hd_ _hdOlabel
@@ -836,14 +846,14 @@ sem_Procs_Nil =
          (let _lhsOlabelled :: Procs'
               _lhsOlabel :: Int
               _lhsOlabelled =
-                  ({-# LINE 111 "AttributeGrammar.ag" #-}
+                  ({-# LINE 174 "AttributeGrammar.ag" #-}
                    []
-                   {-# LINE 842 "AttributeGrammar.hs" #-}
+                   {-# LINE 852 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabel =
-                  ({-# LINE 96 "AttributeGrammar.ag" #-}
+                  ({-# LINE 159 "AttributeGrammar.ag" #-}
                    _lhsIlabel
-                   {-# LINE 847 "AttributeGrammar.hs" #-}
+                   {-# LINE 857 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 -- Procs' ------------------------------------------------------
@@ -868,14 +878,15 @@ sem_Procs'_Cons :: (T_Proc') ->
                    (T_Procs')
 sem_Procs'_Cons hd_ tl_ =
     (let _lhsOpretty :: ( [String] )
+         _hdIinit :: Int
          _hdIpretty :: ( [String] )
          _tlIpretty :: ( [String] )
          _lhsOpretty =
-             ({-# LINE 210 "AttributeGrammar.ag" #-}
+             ({-# LINE 273 "AttributeGrammar.ag" #-}
               _hdIpretty ++ _tlIpretty
-              {-# LINE 877 "AttributeGrammar.hs" #-}
+              {-# LINE 888 "AttributeGrammar.hs" #-}
               )
-         ( _hdIpretty) =
+         ( _hdIinit,_hdIpretty) =
              hd_
          ( _tlIpretty) =
              tl_
@@ -884,9 +895,9 @@ sem_Procs'_Nil :: (T_Procs')
 sem_Procs'_Nil =
     (let _lhsOpretty :: ( [String] )
          _lhsOpretty =
-             ({-# LINE 208 "AttributeGrammar.ag" #-}
+             ({-# LINE 271 "AttributeGrammar.ag" #-}
               []
-              {-# LINE 890 "AttributeGrammar.hs" #-}
+              {-# LINE 901 "AttributeGrammar.hs" #-}
               )
      in  ( _lhsOpretty))
 -- Program -----------------------------------------------------
@@ -919,19 +930,19 @@ sem_Program_Program procs_ stat_ =
          _statIlabel :: Int
          _statIlabelled :: Stat'
          _procsOlabel =
-             ({-# LINE 105 "AttributeGrammar.ag" #-}
+             ({-# LINE 168 "AttributeGrammar.ag" #-}
               1
-              {-# LINE 925 "AttributeGrammar.hs" #-}
+              {-# LINE 936 "AttributeGrammar.hs" #-}
               )
          _statOlabel =
-             ({-# LINE 106 "AttributeGrammar.ag" #-}
+             ({-# LINE 169 "AttributeGrammar.ag" #-}
               _procsIlabel
-              {-# LINE 930 "AttributeGrammar.hs" #-}
+              {-# LINE 941 "AttributeGrammar.hs" #-}
               )
          _lhsOlabelled =
-             ({-# LINE 107 "AttributeGrammar.ag" #-}
+             ({-# LINE 170 "AttributeGrammar.ag" #-}
               Program' _procsIlabelled _statIlabelled
-              {-# LINE 935 "AttributeGrammar.hs" #-}
+              {-# LINE 946 "AttributeGrammar.hs" #-}
               )
          ( _procsIlabel,_procsIlabelled) =
              procs_ _procsOlabel
@@ -947,34 +958,41 @@ sem_Program' :: (Program') ->
 sem_Program' (Program' _procs _stat) =
     (sem_Program'_Program' (sem_Procs' _procs) (sem_Stat' _stat))
 -- semantic domain
-type T_Program' = ( String)
+type T_Program' = ( Int,String)
 data Inh_Program' = Inh_Program' {}
-data Syn_Program' = Syn_Program' {pretty_Syn_Program' :: String}
+data Syn_Program' = Syn_Program' {init_Syn_Program' :: Int,pretty_Syn_Program' :: String}
 wrap_Program' :: (T_Program') ->
                  (Inh_Program') ->
                  (Syn_Program')
 wrap_Program' sem (Inh_Program') =
-    (let ( _lhsOpretty) = sem
-     in  (Syn_Program' _lhsOpretty))
+    (let ( _lhsOinit,_lhsOpretty) = sem
+     in  (Syn_Program' _lhsOinit _lhsOpretty))
 sem_Program'_Program' :: (T_Procs') ->
                          (T_Stat') ->
                          (T_Program')
 sem_Program'_Program' procs_ stat_ =
-    (let _lhsOpretty :: String
+    (let _lhsOinit :: Int
+         _lhsOpretty :: String
          _procsIpretty :: ( [String] )
+         _statIinit :: Int
          _statIisSingle :: Bool
          _statIisSkip :: Bool
          _statIpretty :: ( [String] )
+         _lhsOinit =
+             ({-# LINE 102 "AttributeGrammar.ag" #-}
+              _statIinit
+              {-# LINE 985 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 204 "AttributeGrammar.ag" #-}
+             ({-# LINE 267 "AttributeGrammar.ag" #-}
               unlines ("begin" : indent _procsIpretty ++ indent _statIpretty ++ ["end"])
-              {-# LINE 972 "AttributeGrammar.hs" #-}
+              {-# LINE 990 "AttributeGrammar.hs" #-}
               )
          ( _procsIpretty) =
              procs_
-         ( _statIisSingle,_statIisSkip,_statIpretty) =
+         ( _statIinit,_statIisSingle,_statIisSkip,_statIpretty) =
              stat_
-     in  ( _lhsOpretty))
+     in  ( _lhsOinit,_lhsOpretty))
 -- Stat --------------------------------------------------------
 data Stat = Skip
           | IfThenElse (BExpr) (Stat) (Stat)
@@ -1033,14 +1051,14 @@ sem_Stat_Skip =
          (let _lhsOlabel :: Int
               _lhsOlabelled :: Stat'
               _lhsOlabel =
-                  ({-# LINE 123 "AttributeGrammar.ag" #-}
+                  ({-# LINE 186 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1039 "AttributeGrammar.hs" #-}
+                   {-# LINE 1057 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 124 "AttributeGrammar.ag" #-}
+                  ({-# LINE 187 "AttributeGrammar.ag" #-}
                    Skip' _lhsIlabel
-                   {-# LINE 1044 "AttributeGrammar.hs" #-}
+                   {-# LINE 1062 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 sem_Stat_IfThenElse :: BExpr ->
@@ -1058,24 +1076,24 @@ sem_Stat_IfThenElse cond_ stat1_ stat2_ =
               _stat2Ilabel :: Int
               _stat2Ilabelled :: Stat'
               _stat1Olabel =
-                  ({-# LINE 127 "AttributeGrammar.ag" #-}
+                  ({-# LINE 190 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1064 "AttributeGrammar.hs" #-}
+                   {-# LINE 1082 "AttributeGrammar.hs" #-}
                    )
               _stat2Olabel =
-                  ({-# LINE 128 "AttributeGrammar.ag" #-}
+                  ({-# LINE 191 "AttributeGrammar.ag" #-}
                    _stat1Ilabel
-                   {-# LINE 1069 "AttributeGrammar.hs" #-}
+                   {-# LINE 1087 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabel =
-                  ({-# LINE 129 "AttributeGrammar.ag" #-}
+                  ({-# LINE 192 "AttributeGrammar.ag" #-}
                    _stat2Ilabel
-                   {-# LINE 1074 "AttributeGrammar.hs" #-}
+                   {-# LINE 1092 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 130 "AttributeGrammar.ag" #-}
+                  ({-# LINE 193 "AttributeGrammar.ag" #-}
                    IfThenElse' _lhsIlabel cond_ _stat1Ilabelled _stat2Ilabelled
-                   {-# LINE 1079 "AttributeGrammar.hs" #-}
+                   {-# LINE 1097 "AttributeGrammar.hs" #-}
                    )
               ( _stat1Ilabel,_stat1Ilabelled) =
                   stat1_ _stat1Olabel
@@ -1093,19 +1111,19 @@ sem_Stat_While cond_ stat_ =
               _statIlabel :: Int
               _statIlabelled :: Stat'
               _statOlabel =
-                  ({-# LINE 133 "AttributeGrammar.ag" #-}
+                  ({-# LINE 196 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1099 "AttributeGrammar.hs" #-}
+                   {-# LINE 1117 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabel =
-                  ({-# LINE 134 "AttributeGrammar.ag" #-}
+                  ({-# LINE 197 "AttributeGrammar.ag" #-}
                    _statIlabel
-                   {-# LINE 1104 "AttributeGrammar.hs" #-}
+                   {-# LINE 1122 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 135 "AttributeGrammar.ag" #-}
+                  ({-# LINE 198 "AttributeGrammar.ag" #-}
                    While' _lhsIlabel cond_ _statIlabelled
-                   {-# LINE 1109 "AttributeGrammar.hs" #-}
+                   {-# LINE 1127 "AttributeGrammar.hs" #-}
                    )
               ( _statIlabel,_statIlabelled) =
                   stat_ _statOlabel
@@ -1119,14 +1137,14 @@ sem_Stat_Call name_ params_ out_ =
          (let _lhsOlabel :: Int
               _lhsOlabelled :: Stat'
               _lhsOlabel =
-                  ({-# LINE 138 "AttributeGrammar.ag" #-}
+                  ({-# LINE 201 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 2
-                   {-# LINE 1125 "AttributeGrammar.hs" #-}
+                   {-# LINE 1143 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 139 "AttributeGrammar.ag" #-}
+                  ({-# LINE 202 "AttributeGrammar.ag" #-}
                    Call' _lhsIlabel (_lhsIlabel + 1) name_ params_ out_
-                   {-# LINE 1130 "AttributeGrammar.hs" #-}
+                   {-# LINE 1148 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 sem_Stat_IAssign :: String ->
@@ -1137,14 +1155,14 @@ sem_Stat_IAssign name_ val_ =
          (let _lhsOlabel :: Int
               _lhsOlabelled :: Stat'
               _lhsOlabel =
-                  ({-# LINE 142 "AttributeGrammar.ag" #-}
+                  ({-# LINE 205 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1143 "AttributeGrammar.hs" #-}
+                   {-# LINE 1161 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 143 "AttributeGrammar.ag" #-}
+                  ({-# LINE 206 "AttributeGrammar.ag" #-}
                    IAssign' _lhsIlabel name_ val_
-                   {-# LINE 1148 "AttributeGrammar.hs" #-}
+                   {-# LINE 1166 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 sem_Stat_BAssign :: String ->
@@ -1155,14 +1173,14 @@ sem_Stat_BAssign name_ val_ =
          (let _lhsOlabel :: Int
               _lhsOlabelled :: Stat'
               _lhsOlabel =
-                  ({-# LINE 146 "AttributeGrammar.ag" #-}
+                  ({-# LINE 209 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1161 "AttributeGrammar.hs" #-}
+                   {-# LINE 1179 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 147 "AttributeGrammar.ag" #-}
+                  ({-# LINE 210 "AttributeGrammar.ag" #-}
                    BAssign' _lhsIlabel name_ val_
-                   {-# LINE 1166 "AttributeGrammar.hs" #-}
+                   {-# LINE 1184 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 sem_Stat_Seq :: T_Stat ->
@@ -1179,24 +1197,24 @@ sem_Stat_Seq stat1_ stat2_ =
               _stat2Ilabel :: Int
               _stat2Ilabelled :: Stat'
               _stat1Olabel =
-                  ({-# LINE 150 "AttributeGrammar.ag" #-}
+                  ({-# LINE 213 "AttributeGrammar.ag" #-}
                    _lhsIlabel
-                   {-# LINE 1185 "AttributeGrammar.hs" #-}
+                   {-# LINE 1203 "AttributeGrammar.hs" #-}
                    )
               _stat2Olabel =
-                  ({-# LINE 151 "AttributeGrammar.ag" #-}
+                  ({-# LINE 214 "AttributeGrammar.ag" #-}
                    _stat1Ilabel
-                   {-# LINE 1190 "AttributeGrammar.hs" #-}
+                   {-# LINE 1208 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 152 "AttributeGrammar.ag" #-}
+                  ({-# LINE 215 "AttributeGrammar.ag" #-}
                    Seq' _stat1Ilabelled _stat2Ilabelled
-                   {-# LINE 1195 "AttributeGrammar.hs" #-}
+                   {-# LINE 1213 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabel =
-                  ({-# LINE 96 "AttributeGrammar.ag" #-}
+                  ({-# LINE 159 "AttributeGrammar.ag" #-}
                    _stat2Ilabel
-                   {-# LINE 1200 "AttributeGrammar.hs" #-}
+                   {-# LINE 1218 "AttributeGrammar.hs" #-}
                    )
               ( _stat1Ilabel,_stat1Ilabelled) =
                   stat1_ _stat1Olabel
@@ -1211,14 +1229,14 @@ sem_Stat_Malloc name_ size_ =
          (let _lhsOlabel :: Int
               _lhsOlabelled :: Stat'
               _lhsOlabel =
-                  ({-# LINE 155 "AttributeGrammar.ag" #-}
+                  ({-# LINE 218 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1217 "AttributeGrammar.hs" #-}
+                   {-# LINE 1235 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 156 "AttributeGrammar.ag" #-}
+                  ({-# LINE 219 "AttributeGrammar.ag" #-}
                    Malloc' _lhsIlabel name_ size_
-                   {-# LINE 1222 "AttributeGrammar.hs" #-}
+                   {-# LINE 1240 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 sem_Stat_Free :: IExpr ->
@@ -1228,14 +1246,14 @@ sem_Stat_Free ptr_ =
          (let _lhsOlabel :: Int
               _lhsOlabelled :: Stat'
               _lhsOlabel =
-                  ({-# LINE 159 "AttributeGrammar.ag" #-}
+                  ({-# LINE 222 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1234 "AttributeGrammar.hs" #-}
+                   {-# LINE 1252 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 160 "AttributeGrammar.ag" #-}
+                  ({-# LINE 223 "AttributeGrammar.ag" #-}
                    Free' _lhsIlabel ptr_
-                   {-# LINE 1239 "AttributeGrammar.hs" #-}
+                   {-# LINE 1257 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 sem_Stat_RefAssign :: IExpr ->
@@ -1246,14 +1264,14 @@ sem_Stat_RefAssign ptr_ val_ =
          (let _lhsOlabel :: Int
               _lhsOlabelled :: Stat'
               _lhsOlabel =
-                  ({-# LINE 163 "AttributeGrammar.ag" #-}
+                  ({-# LINE 226 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1252 "AttributeGrammar.hs" #-}
+                   {-# LINE 1270 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 164 "AttributeGrammar.ag" #-}
+                  ({-# LINE 227 "AttributeGrammar.ag" #-}
                    RefAssign' _lhsIlabel ptr_ val_
-                   {-# LINE 1257 "AttributeGrammar.hs" #-}
+                   {-# LINE 1275 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 sem_Stat_Continue :: T_Stat
@@ -1262,14 +1280,14 @@ sem_Stat_Continue =
          (let _lhsOlabel :: Int
               _lhsOlabelled :: Stat'
               _lhsOlabel =
-                  ({-# LINE 167 "AttributeGrammar.ag" #-}
+                  ({-# LINE 230 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1268 "AttributeGrammar.hs" #-}
+                   {-# LINE 1286 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 168 "AttributeGrammar.ag" #-}
+                  ({-# LINE 231 "AttributeGrammar.ag" #-}
                    Continue' _lhsIlabel
-                   {-# LINE 1273 "AttributeGrammar.hs" #-}
+                   {-# LINE 1291 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 sem_Stat_Break :: T_Stat
@@ -1278,14 +1296,14 @@ sem_Stat_Break =
          (let _lhsOlabel :: Int
               _lhsOlabelled :: Stat'
               _lhsOlabel =
-                  ({-# LINE 171 "AttributeGrammar.ag" #-}
+                  ({-# LINE 234 "AttributeGrammar.ag" #-}
                    _lhsIlabel + 1
-                   {-# LINE 1284 "AttributeGrammar.hs" #-}
+                   {-# LINE 1302 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
-                  ({-# LINE 172 "AttributeGrammar.ag" #-}
+                  ({-# LINE 235 "AttributeGrammar.ag" #-}
                    Break' _lhsIlabel
-                   {-# LINE 1289 "AttributeGrammar.hs" #-}
+                   {-# LINE 1307 "AttributeGrammar.hs" #-}
                    )
           in  ( _lhsOlabel,_lhsOlabelled)))
 -- Stat' -------------------------------------------------------
@@ -1330,56 +1348,70 @@ sem_Stat' (Continue' _label) =
 sem_Stat' (Break' _label) =
     (sem_Stat'_Break' _label)
 -- semantic domain
-type T_Stat' = ( Bool,Bool,( [String] ))
+type T_Stat' = ( Int,Bool,Bool,( [String] ))
 data Inh_Stat' = Inh_Stat' {}
-data Syn_Stat' = Syn_Stat' {isSingle_Syn_Stat' :: Bool,isSkip_Syn_Stat' :: Bool,pretty_Syn_Stat' :: ( [String] )}
+data Syn_Stat' = Syn_Stat' {init_Syn_Stat' :: Int,isSingle_Syn_Stat' :: Bool,isSkip_Syn_Stat' :: Bool,pretty_Syn_Stat' :: ( [String] )}
 wrap_Stat' :: (T_Stat') ->
               (Inh_Stat') ->
               (Syn_Stat')
 wrap_Stat' sem (Inh_Stat') =
-    (let ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty) = sem
-     in  (Syn_Stat' _lhsOisSingle _lhsOisSkip _lhsOpretty))
+    (let ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty) = sem
+     in  (Syn_Stat' _lhsOinit _lhsOisSingle _lhsOisSkip _lhsOpretty))
 sem_Stat'_Skip' :: Int ->
                    (T_Stat')
 sem_Stat'_Skip' label_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
+         _lhsOinit =
+             ({-# LINE 116 "AttributeGrammar.ag" #-}
+              label_
+              {-# LINE 1371 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 220 "AttributeGrammar.ag" #-}
+             ({-# LINE 283 "AttributeGrammar.ag" #-}
               ["skip" ++ showLabel label_]
-              {-# LINE 1352 "AttributeGrammar.hs" #-}
+              {-# LINE 1376 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 221 "AttributeGrammar.ag" #-}
+             ({-# LINE 284 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1357 "AttributeGrammar.hs" #-}
+              {-# LINE 1381 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 222 "AttributeGrammar.ag" #-}
+             ({-# LINE 285 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1362 "AttributeGrammar.hs" #-}
+              {-# LINE 1386 "AttributeGrammar.hs" #-}
               )
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_IfThenElse' :: Int ->
                          T_BExpr ->
                          (T_Stat') ->
                          (T_Stat') ->
                          (T_Stat')
 sem_Stat'_IfThenElse' labelc_ cond_ stat1_ stat2_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
          _condIprecedence :: Int
          _condIpretty :: String
+         _stat1Iinit :: Int
          _stat1IisSingle :: Bool
          _stat1IisSkip :: Bool
          _stat1Ipretty :: ( [String] )
+         _stat2Iinit :: Int
          _stat2IisSingle :: Bool
          _stat2IisSkip :: Bool
          _stat2Ipretty :: ( [String] )
+         _lhsOinit =
+             ({-# LINE 119 "AttributeGrammar.ag" #-}
+              labelc_
+              {-# LINE 1412 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 224 "AttributeGrammar.ag" #-}
+             ({-# LINE 287 "AttributeGrammar.ag" #-}
               ["if [" ++ _condIpretty ++ "]" ++ showLabel labelc_ ++ " then" ++ (if _stat1IisSingle then "" else " {")]
                ++ indent _stat1Ipretty
                ++ (if _stat2IisSkip then (if _stat1IisSingle then [] else ["}"]) else
@@ -1387,60 +1419,67 @@ sem_Stat'_IfThenElse' labelc_ cond_ stat1_ stat2_ =
                    ++ indent _stat2Ipretty
                    ++ (if _stat2IisSingle then [] else ["}"])
                  )
-              {-# LINE 1391 "AttributeGrammar.hs" #-}
+              {-# LINE 1423 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 231 "AttributeGrammar.ag" #-}
+             ({-# LINE 294 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1396 "AttributeGrammar.hs" #-}
+              {-# LINE 1428 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 232 "AttributeGrammar.ag" #-}
+             ({-# LINE 295 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1401 "AttributeGrammar.hs" #-}
+              {-# LINE 1433 "AttributeGrammar.hs" #-}
               )
          ( _condIprecedence,_condIpretty) =
              cond_
-         ( _stat1IisSingle,_stat1IisSkip,_stat1Ipretty) =
+         ( _stat1Iinit,_stat1IisSingle,_stat1IisSkip,_stat1Ipretty) =
              stat1_
-         ( _stat2IisSingle,_stat2IisSkip,_stat2Ipretty) =
+         ( _stat2Iinit,_stat2IisSingle,_stat2IisSkip,_stat2Ipretty) =
              stat2_
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_While' :: Int ->
                     T_BExpr ->
                     (T_Stat') ->
                     (T_Stat')
 sem_Stat'_While' labelc_ cond_ stat_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
          _condIprecedence :: Int
          _condIpretty :: String
+         _statIinit :: Int
          _statIisSingle :: Bool
          _statIisSkip :: Bool
          _statIpretty :: ( [String] )
+         _lhsOinit =
+             ({-# LINE 122 "AttributeGrammar.ag" #-}
+              labelc_
+              {-# LINE 1460 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 234 "AttributeGrammar.ag" #-}
+             ({-# LINE 297 "AttributeGrammar.ag" #-}
               ["while [" ++ _condIpretty ++ "]" ++ showLabel labelc_ ++ " do" ++ (if _statIisSingle then "" else " {")]
                ++ indent _statIpretty
                ++ (if _statIisSingle then [] else ["}"])
-              {-# LINE 1428 "AttributeGrammar.hs" #-}
+              {-# LINE 1467 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 237 "AttributeGrammar.ag" #-}
+             ({-# LINE 300 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1433 "AttributeGrammar.hs" #-}
+              {-# LINE 1472 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 238 "AttributeGrammar.ag" #-}
+             ({-# LINE 301 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1438 "AttributeGrammar.hs" #-}
+              {-# LINE 1477 "AttributeGrammar.hs" #-}
               )
          ( _condIprecedence,_condIpretty) =
              cond_
-         ( _statIisSingle,_statIisSkip,_statIpretty) =
+         ( _statIinit,_statIisSingle,_statIisSkip,_statIpretty) =
              stat_
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_Call' :: Int ->
                    Int ->
                    String ->
@@ -1448,245 +1487,301 @@ sem_Stat'_Call' :: Int ->
                    String ->
                    (T_Stat')
 sem_Stat'_Call' labelCall_ labelExit_ name_ params_ out_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
          _paramsIpretty :: String
+         _lhsOinit =
+             ({-# LINE 125 "AttributeGrammar.ag" #-}
+              labelCall_
+              {-# LINE 1499 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 240 "AttributeGrammar.ag" #-}
+             ({-# LINE 303 "AttributeGrammar.ag" #-}
               ["[call " ++ name_ ++ "(" ++ _paramsIpretty ++ out_ ++ ")]" ++ showLabel labelCall_ ++ "₋" ++ showLabel labelExit_]
-              {-# LINE 1459 "AttributeGrammar.hs" #-}
+              {-# LINE 1504 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 241 "AttributeGrammar.ag" #-}
+             ({-# LINE 304 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1464 "AttributeGrammar.hs" #-}
+              {-# LINE 1509 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 242 "AttributeGrammar.ag" #-}
+             ({-# LINE 305 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1469 "AttributeGrammar.hs" #-}
+              {-# LINE 1514 "AttributeGrammar.hs" #-}
               )
          ( _paramsIpretty) =
              params_
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_IAssign' :: Int ->
                       String ->
                       T_IExpr ->
                       (T_Stat')
 sem_Stat'_IAssign' label_ name_ val_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
          _valIprecedence :: Int
          _valIpretty :: String
+         _lhsOinit =
+             ({-# LINE 128 "AttributeGrammar.ag" #-}
+              label_
+              {-# LINE 1533 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 244 "AttributeGrammar.ag" #-}
+             ({-# LINE 307 "AttributeGrammar.ag" #-}
               ["[" ++ name_ ++ " := " ++ _valIpretty ++ "]" ++ showLabel label_]
-              {-# LINE 1487 "AttributeGrammar.hs" #-}
+              {-# LINE 1538 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 245 "AttributeGrammar.ag" #-}
+             ({-# LINE 308 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1492 "AttributeGrammar.hs" #-}
+              {-# LINE 1543 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 246 "AttributeGrammar.ag" #-}
+             ({-# LINE 309 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1497 "AttributeGrammar.hs" #-}
+              {-# LINE 1548 "AttributeGrammar.hs" #-}
               )
          ( _valIprecedence,_valIpretty) =
              val_
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_BAssign' :: Int ->
                       String ->
                       T_BExpr ->
                       (T_Stat')
 sem_Stat'_BAssign' label_ name_ val_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
          _valIprecedence :: Int
          _valIpretty :: String
+         _lhsOinit =
+             ({-# LINE 131 "AttributeGrammar.ag" #-}
+              label_
+              {-# LINE 1567 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 248 "AttributeGrammar.ag" #-}
+             ({-# LINE 311 "AttributeGrammar.ag" #-}
               ["[" ++ name_ ++ " := " ++ _valIpretty ++ "]" ++ showLabel label_]
-              {-# LINE 1515 "AttributeGrammar.hs" #-}
+              {-# LINE 1572 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 249 "AttributeGrammar.ag" #-}
+             ({-# LINE 312 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1520 "AttributeGrammar.hs" #-}
+              {-# LINE 1577 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 250 "AttributeGrammar.ag" #-}
+             ({-# LINE 313 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1525 "AttributeGrammar.hs" #-}
+              {-# LINE 1582 "AttributeGrammar.hs" #-}
               )
          ( _valIprecedence,_valIpretty) =
              val_
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_Seq' :: (T_Stat') ->
                   (T_Stat') ->
                   (T_Stat')
 sem_Stat'_Seq' stat1_ stat2_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
+         _stat1Iinit :: Int
          _stat1IisSingle :: Bool
          _stat1IisSkip :: Bool
          _stat1Ipretty :: ( [String] )
+         _stat2Iinit :: Int
          _stat2IisSingle :: Bool
          _stat2IisSkip :: Bool
          _stat2Ipretty :: ( [String] )
+         _lhsOinit =
+             ({-# LINE 134 "AttributeGrammar.ag" #-}
+              _stat1Iinit
+              {-# LINE 1606 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 252 "AttributeGrammar.ag" #-}
+             ({-# LINE 315 "AttributeGrammar.ag" #-}
               addSemicolon _stat1Ipretty ++ _stat2Ipretty
-              {-# LINE 1546 "AttributeGrammar.hs" #-}
+              {-# LINE 1611 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 253 "AttributeGrammar.ag" #-}
+             ({-# LINE 316 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1551 "AttributeGrammar.hs" #-}
+              {-# LINE 1616 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 254 "AttributeGrammar.ag" #-}
+             ({-# LINE 317 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1556 "AttributeGrammar.hs" #-}
+              {-# LINE 1621 "AttributeGrammar.hs" #-}
               )
-         ( _stat1IisSingle,_stat1IisSkip,_stat1Ipretty) =
+         ( _stat1Iinit,_stat1IisSingle,_stat1IisSkip,_stat1Ipretty) =
              stat1_
-         ( _stat2IisSingle,_stat2IisSkip,_stat2Ipretty) =
+         ( _stat2Iinit,_stat2IisSingle,_stat2IisSkip,_stat2Ipretty) =
              stat2_
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_Malloc' :: Int ->
                      String ->
                      T_IExpr ->
                      (T_Stat')
 sem_Stat'_Malloc' label_ name_ size_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
          _sizeIprecedence :: Int
          _sizeIpretty :: String
+         _lhsOinit =
+             ({-# LINE 137 "AttributeGrammar.ag" #-}
+              label_
+              {-# LINE 1642 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 256 "AttributeGrammar.ag" #-}
+             ({-# LINE 319 "AttributeGrammar.ag" #-}
               ["malloc(" ++ name_ ++ ", " ++ _sizeIpretty ++ ")" ++ showLabel label_]
-              {-# LINE 1576 "AttributeGrammar.hs" #-}
+              {-# LINE 1647 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 257 "AttributeGrammar.ag" #-}
+             ({-# LINE 320 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1581 "AttributeGrammar.hs" #-}
+              {-# LINE 1652 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 258 "AttributeGrammar.ag" #-}
+             ({-# LINE 321 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1586 "AttributeGrammar.hs" #-}
+              {-# LINE 1657 "AttributeGrammar.hs" #-}
               )
          ( _sizeIprecedence,_sizeIpretty) =
              size_
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_Free' :: Int ->
                    T_IExpr ->
                    (T_Stat')
 sem_Stat'_Free' label_ ptr_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
          _ptrIprecedence :: Int
          _ptrIpretty :: String
+         _lhsOinit =
+             ({-# LINE 140 "AttributeGrammar.ag" #-}
+              label_
+              {-# LINE 1675 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 260 "AttributeGrammar.ag" #-}
+             ({-# LINE 323 "AttributeGrammar.ag" #-}
               ["free(" ++ _ptrIpretty ++ ")" ++ showLabel label_]
-              {-# LINE 1603 "AttributeGrammar.hs" #-}
+              {-# LINE 1680 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 261 "AttributeGrammar.ag" #-}
+             ({-# LINE 324 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1608 "AttributeGrammar.hs" #-}
+              {-# LINE 1685 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 262 "AttributeGrammar.ag" #-}
+             ({-# LINE 325 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1613 "AttributeGrammar.hs" #-}
+              {-# LINE 1690 "AttributeGrammar.hs" #-}
               )
          ( _ptrIprecedence,_ptrIpretty) =
              ptr_
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_RefAssign' :: Int ->
                         T_IExpr ->
                         T_IExpr ->
                         (T_Stat')
 sem_Stat'_RefAssign' label_ ptr_ val_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
          _ptrIprecedence :: Int
          _ptrIpretty :: String
          _valIprecedence :: Int
          _valIpretty :: String
+         _lhsOinit =
+             ({-# LINE 143 "AttributeGrammar.ag" #-}
+              label_
+              {-# LINE 1711 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 264 "AttributeGrammar.ag" #-}
+             ({-# LINE 327 "AttributeGrammar.ag" #-}
               ["[*" ++ _ptrIpretty ++ " := " ++ _valIpretty ++ "]" ++ showLabel label_]
-              {-# LINE 1633 "AttributeGrammar.hs" #-}
+              {-# LINE 1716 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 265 "AttributeGrammar.ag" #-}
+             ({-# LINE 328 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1638 "AttributeGrammar.hs" #-}
+              {-# LINE 1721 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 266 "AttributeGrammar.ag" #-}
+             ({-# LINE 329 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1643 "AttributeGrammar.hs" #-}
+              {-# LINE 1726 "AttributeGrammar.hs" #-}
               )
          ( _ptrIprecedence,_ptrIpretty) =
              ptr_
          ( _valIprecedence,_valIpretty) =
              val_
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_Continue' :: Int ->
                        (T_Stat')
 sem_Stat'_Continue' label_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
+         _lhsOinit =
+             ({-# LINE 146 "AttributeGrammar.ag" #-}
+              label_
+              {-# LINE 1743 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 268 "AttributeGrammar.ag" #-}
+             ({-# LINE 331 "AttributeGrammar.ag" #-}
               ["continue" ++ showLabel label_]
-              {-# LINE 1659 "AttributeGrammar.hs" #-}
+              {-# LINE 1748 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 269 "AttributeGrammar.ag" #-}
+             ({-# LINE 332 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1664 "AttributeGrammar.hs" #-}
+              {-# LINE 1753 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 270 "AttributeGrammar.ag" #-}
+             ({-# LINE 333 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1669 "AttributeGrammar.hs" #-}
+              {-# LINE 1758 "AttributeGrammar.hs" #-}
               )
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))
 sem_Stat'_Break' :: Int ->
                     (T_Stat')
 sem_Stat'_Break' label_ =
-    (let _lhsOpretty :: ( [String] )
+    (let _lhsOinit :: Int
+         _lhsOpretty :: ( [String] )
          _lhsOisSkip :: Bool
          _lhsOisSingle :: Bool
+         _lhsOinit =
+             ({-# LINE 149 "AttributeGrammar.ag" #-}
+              label_
+              {-# LINE 1771 "AttributeGrammar.hs" #-}
+              )
          _lhsOpretty =
-             ({-# LINE 272 "AttributeGrammar.ag" #-}
+             ({-# LINE 335 "AttributeGrammar.ag" #-}
               ["continue" ++ showLabel label_]
-              {-# LINE 1681 "AttributeGrammar.hs" #-}
+              {-# LINE 1776 "AttributeGrammar.hs" #-}
               )
          _lhsOisSkip =
-             ({-# LINE 273 "AttributeGrammar.ag" #-}
+             ({-# LINE 336 "AttributeGrammar.ag" #-}
               False
-              {-# LINE 1686 "AttributeGrammar.hs" #-}
+              {-# LINE 1781 "AttributeGrammar.hs" #-}
               )
          _lhsOisSingle =
-             ({-# LINE 274 "AttributeGrammar.ag" #-}
+             ({-# LINE 337 "AttributeGrammar.ag" #-}
               True
-              {-# LINE 1691 "AttributeGrammar.hs" #-}
+              {-# LINE 1786 "AttributeGrammar.hs" #-}
               )
-     in  ( _lhsOisSingle,_lhsOisSkip,_lhsOpretty))
+     in  ( _lhsOinit,_lhsOisSingle,_lhsOisSkip,_lhsOpretty))

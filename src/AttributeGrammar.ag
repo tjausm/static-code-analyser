@@ -95,58 +95,58 @@ type Exprs = [Expr]
 
 -- Init
 
-attr Program' Proc' Procs' Stat' [ | | init :: Int ]
+attr Program' Proc' Stat' [ | | init :: Int ]
 
 sem Program'
   | Program'
-    lhs.init = 1
+    lhs.init = @stat.init
 
 sem Proc'
   | Proc'
-    lhs.init = @lhs.labelEntry
+    lhs.init = @labelEntry
 
-sem Procs'
-  | Nil
-    lhs.init = 0 -- I'm not sure this case should be here, you can't have an init of nothing. 
-  | Cons
-    lhs.init = @hd.label  -- I'm also not convinced Procs' should have an init at all. 
+--sem Procs'
+  -- | Nil
+    -- lhs.init = 0 -- I'm not sure this case should be here, you can't have an init of nothing. 
+  -- | Cons
+    -- lhs.init = @hd.label  -- I'm also not convinced Procs' should have an init at all. 
 
 sem Stat' 
   | Skip' 
-    lhs.init = @lhs.label         
+    lhs.init = @label         
 
   | IfThenElse' 
-    lhs.init = @lhs.labelc    
+    lhs.init = @labelc    
 
   | While' 
-    lhs.init = @lhs.labelc        
+    lhs.init = @labelc        
   
   | Call'
-    lhs.init = @lhs.labelCall          
+    lhs.init = @labelCall          
   
   | IAssign'
-    lhs.init = @lhs.label
+    lhs.init = @label
 
   | BAssign'
-    lhs.init = @lhs.label
+    lhs.init = @label
 
   | Seq'
     lhs.init = @stat1.init
 
   | Malloc'
-    lhs.init = @lhs.label
+    lhs.init = @label
 
   | Free'
-    lhs.init = @lhs.label
+    lhs.init = @label
 
   | RefAssign' 
-    lhs.init = @lhs.label
+    lhs.init = @label
 
   | Continue'    
-    lhs.init = @lhs.label  
+    lhs.init = @label  
 
   | Break'
-    lhs.init = @lhs.label
+    lhs.init = @label
 
 -- Final
 
