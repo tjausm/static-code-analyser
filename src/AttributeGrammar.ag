@@ -91,6 +91,69 @@ type Procs = [Proc]
 type Procs' = [Proc']
 type Exprs = [Expr]
 
+-- * Compute flow, init, final, blocks.
+
+-- Init
+
+attr Program' Proc' Procs' Stat' [ | | init :: Int ]
+
+sem Program'
+  | Program'
+    lhs.init = 1
+
+sem Proc'
+  | Proc'
+    lhs.init = @lhs.labelEntry
+
+sem Procs'
+  | Nil
+    lhs.init = 0 -- I'm not sure this case should be here, you can't have an init of nothing. 
+  | Cons
+    lhs.init = @hd.label  -- I'm also not convinced Procs' should have an init at all. 
+
+sem Stat' 
+  | Skip' 
+    lhs.init = @lhs.label         
+
+  | IfThenElse' 
+    lhs.init = @lhs.labelc    
+
+  | While' 
+    lhs.init = @lhs.labelc        
+  
+  | Call'
+    lhs.init = @lhs.labelCall          
+  
+  | IAssign'
+    lhs.init = @lhs.label
+
+  | BAssign'
+    lhs.init = @lhs.label
+
+  | Seq'
+    lhs.init = @stat1.init
+
+  | Malloc'
+    lhs.init = @lhs.label
+
+  | Free'
+    lhs.init = @lhs.label
+
+  | RefAssign' 
+    lhs.init = @lhs.label
+
+  | Continue'    
+    lhs.init = @lhs.label  
+
+  | Break'
+    lhs.init = @lhs.label
+
+-- Final
+
+-- Blocks
+
+-- Flow
+
 -- * Create a labelled AST
 
 attr Proc Procs Stat [ | label :: Int | ]

@@ -1,6 +1,6 @@
 
 
--- UUAGC 0.9.52.2 (AttributeGrammar)
+-- UUAGC 0.9.53.1 (AttributeGrammar)
 module AttributeGrammar where
 {-# LINE 1 "AttributeGrammar.ag" #-}
 
@@ -1034,7 +1034,7 @@ sem_Stat_Skip =
               _lhsOlabelled :: Stat'
               _lhsOlabel =
                   ({-# LINE 123 "AttributeGrammar.ag" #-}
-                   _lhsIlabel
+                   _lhsIlabel + 1
                    {-# LINE 1039 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelled =
