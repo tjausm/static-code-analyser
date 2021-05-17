@@ -149,6 +149,52 @@ sem Stat'
     lhs.init = @label
 
 -- Final
+attr Program' Proc' Stat' [ | | final :: {[Int]} ] -- Proc' Stat'
+
+sem Program'
+  | Program'
+    lhs.final = @stat.final
+
+sem Proc'
+  | Proc'
+    lhs.final = [@labelReturn]
+
+sem Stat' 
+  | Skip' 
+    lhs.final = [@label]         
+
+  | IfThenElse' 
+    lhs.final = @stat1.final ++ @stat2.final 
+
+  | While' 
+    lhs.final = [@labelc]        
+  
+  | Call'
+    lhs.final = [@labelCall]          
+  
+  | IAssign'
+    lhs.final = [@label]
+
+  | BAssign'
+    lhs.final = [@label]
+
+  | Seq'
+    lhs.final = @stat2.final
+
+  | Malloc'
+    lhs.final = [@label]
+
+  | Free'
+    lhs.final = [@label]
+
+  | RefAssign' 
+    lhs.final = [@label]
+
+  | Continue'    
+    lhs.final = [@label]  
+
+  | Break'
+    lhs.final = [@label]
 
 -- Blocks
 
