@@ -196,9 +196,120 @@ sem Stat'
   | Break'
     lhs.final = [@label]
 
--- Blocks
-
 -- Flow
+attr Program' Procs' Proc' Stat' [ | | flow :: {[(Int, Int)]} ] -- Proc' Stat'
+
+sem Program'
+  | Program'
+    lhs.flow = @stat.flow ++ @procs.flow
+
+sem Proc'
+  | Proc'
+    lhs.flow = @stat.flow
+
+sem Procs'
+  | Nil
+    lhs.flow = []
+  | Cons
+    lhs.flow = @hd.flow ++ @tl.flow      
+
+sem Stat' 
+  | Skip' 
+    lhs.flow = []         
+
+  | IfThenElse' 
+    lhs.flow = (@labelc, @stat1.init) : (@labelc, @stat2.init) : @stat1.flow ++ @stat2.flow
+
+  | While' 
+    lhs.flow = (@labelc, @stat.init) : map (\x -> (x, @labelc)) @stat.final ++ @stat.flow        
+  
+  -- | Call'          labelCall :: Int  labelExit :: Int      name  :: String     params :: Exprs    out :: String
+  -- | Call'
+  --   lhs.flow = undefined          
+  
+  | IAssign'
+    lhs.flow = []
+
+  | BAssign'
+    lhs.flow = []
+
+  | Seq'
+    lhs.flow = @stat1.flow ++ @stat2.flow ++ map (\x -> (x, @stat2.init)) @stat1.final
+
+  | Malloc'
+    lhs.flow = []
+
+  | Free'
+    lhs.flow = []
+
+  | RefAssign' 
+    lhs.flow = []
+
+  | Continue'    
+    lhs.flow = []  
+
+  | Break'
+    lhs.flow = []
+
+-- inter-flow
+
+-- map procedureName to entry and exit label. 
+
+attr Program' Procs' Proc' [ | | procMapCollect :: { M.Map String (Int, Int) } ]
+attr Stat' [ procMapPassDown :: { M.Map String (Int, Int) } | | ]
+
+sem Program'
+  | Program'
+    lhs.procMapCollect = @procs.procMapCollect
+    stat.procMapPassDown = @procs.procMapCollect
+
+sem Proc'
+  | Proc'
+    lhs.procMapCollect = M.singleton @name (@labelEntry, @labelReturn)
+
+sem Procs'
+  | Nil
+    lhs.procMapCollect = M.empty
+  | Cons
+    lhs.procMapCollect = M.union @hd.procMapCollect @tl.procMapCollect      
+
+{-sem Stat' 
+  | Skip' 
+    lhs.flow = []         
+
+  | IfThenElse' 
+    lhs.flow = (@labelc, @stat1.init) : (@labelc, @stat2.init) : @stat1.flow ++ @stat2.flow
+
+  | While' 
+    lhs.flow = (@labelc, @stat.init) : map (\x -> (x, @labelc)) @stat.final ++ @stat.flow        
+  
+  -- | Call'          labelCall :: Int  labelExit :: Int      name  :: String     params :: Exprs    out :: String
+  -- | Call'
+  --   lhs.flow = undefined          
+  
+  | IAssign'
+    lhs.flow = []
+
+  | BAssign'
+    lhs.flow = []
+
+  | Seq'
+    lhs.flow = @stat1.flow ++ @stat2.flow ++ map (\x -> (x, @stat2.init)) @stat1.final
+
+  | Malloc'
+    lhs.flow = []
+
+  | Free'
+    lhs.flow = []
+
+  | RefAssign' 
+    lhs.flow = []
+
+  | Continue'    
+    lhs.flow = []  
+
+  | Break'
+    lhs.flow = []-}
 
 -- * Create a labelled AST
 
