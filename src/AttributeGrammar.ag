@@ -91,6 +91,9 @@ type Procs = [Proc]
 type Procs' = [Proc']
 type Exprs = [Expr]
 
+data Flow | Intra labels :: {(Int, Int)}
+          | Inter labels :: {(Int, Int)}
+
 -- * Compute flow, init, final, blocks.
 
 -- Init
@@ -104,12 +107,6 @@ sem Program'
 sem Proc'
   | Proc'
     lhs.init = @labelEntry
-
---sem Procs'
-  -- | Nil
-    -- lhs.init = 0 -- I'm not sure this case should be here, you can't have an init of nothing. 
-  -- | Cons
-    -- lhs.init = @hd.label  -- I'm also not convinced Procs' should have an init at all. 
 
 sem Stat' 
   | Skip' 
@@ -149,7 +146,7 @@ sem Stat'
     lhs.init = @label
 
 -- Final
-attr Program' Proc' Stat' [ | | final :: {[Int]} ] -- Proc' Stat'
+attr Program' Proc' Stat' [ | | final :: {[Int]} ] 
 
 sem Program'
   | Program'
@@ -197,7 +194,7 @@ sem Stat'
     lhs.final = [@label]
 
 -- Flow
-attr Program' Procs' Proc' Stat' [ | | flow :: {[(Int, Int)]} ] -- Proc' Stat'
+attr Program' Procs' Proc' Stat' [ | | flow :: {[Flow]} ]
 
 sem Program'
   | Program'
@@ -218,14 +215,14 @@ sem Stat'
     lhs.flow = []         
 
   | IfThenElse' 
-    lhs.flow = (@labelc, @stat1.init) : (@labelc, @stat2.init) : @stat1.flow ++ @stat2.flow
+    lhs.flow = Intra (@labelc, @stat1.init) : Intra (@labelc, @stat2.init) : @stat1.flow ++ @stat2.flow
 
   | While' 
-    lhs.flow = (@labelc, @stat.init) : map (\x -> (x, @labelc)) @stat.final ++ @stat.flow        
+    lhs.flow = Intra (@labelc, @stat.init) : map (\x -> Intra (x, @labelc)) @stat.final ++ @stat.flow        
   
-  -- | Call'          labelCall :: Int  labelExit :: Int      name  :: String     params :: Exprs    out :: String
-  -- | Call'
-  --   lhs.flow = undefined          
+  | Call'
+    lhs.flow = (\(x, y) -> Inter (@labelCall, x) : [Inter (y, @labelExit)]) (@lhs.procMapPassDown M.! @name)
+    -- Using (!) returns an error if the key is not in the map, but that should not happen.        
   
   | IAssign'
     lhs.flow = []
@@ -234,7 +231,7 @@ sem Stat'
     lhs.flow = []
 
   | Seq'
-    lhs.flow = @stat1.flow ++ @stat2.flow ++ map (\x -> (x, @stat2.init)) @stat1.final
+    lhs.flow = @stat1.flow ++ @stat2.flow ++ map (\x -> Intra (x, @stat2.init)) @stat1.final
 
   | Malloc'
     lhs.flow = []
@@ -256,60 +253,38 @@ sem Stat'
 -- map procedureName to entry and exit label. 
 
 attr Program' Procs' Proc' [ | | procMapCollect :: { M.Map String (Int, Int) } ]
-attr Stat' [ procMapPassDown :: { M.Map String (Int, Int) } | | ]
+attr Procs' Proc' Stat' [ procMapPassDown :: { M.Map String (Int, Int) } | | ]
 
 sem Program'
   | Program'
     lhs.procMapCollect = @procs.procMapCollect
     stat.procMapPassDown = @procs.procMapCollect
+    procs.procMapPassDown = @procs.procMapCollect
 
 sem Proc'
   | Proc'
     lhs.procMapCollect = M.singleton @name (@labelEntry, @labelReturn)
+    stat.procMapPassDown = @lhs.procMapPassDown
 
 sem Procs'
   | Nil
     lhs.procMapCollect = M.empty
   | Cons
-    lhs.procMapCollect = M.union @hd.procMapCollect @tl.procMapCollect      
+    lhs.procMapCollect = M.union @hd.procMapCollect @tl.procMapCollect
+    hd.procMapPassDown = @lhs.procMapPassDown
+    tl.procMapPassDown = @lhs.procMapPassDown     
 
-{-sem Stat' 
-  | Skip' 
-    lhs.flow = []         
-
+sem Stat' 
   | IfThenElse' 
-    lhs.flow = (@labelc, @stat1.init) : (@labelc, @stat2.init) : @stat1.flow ++ @stat2.flow
+    stat1.procMapPassDown = @lhs.procMapPassDown
+    stat2.procMapPassDown = @lhs.procMapPassDown
 
   | While' 
-    lhs.flow = (@labelc, @stat.init) : map (\x -> (x, @labelc)) @stat.final ++ @stat.flow        
-  
-  -- | Call'          labelCall :: Int  labelExit :: Int      name  :: String     params :: Exprs    out :: String
-  -- | Call'
-  --   lhs.flow = undefined          
-  
-  | IAssign'
-    lhs.flow = []
-
-  | BAssign'
-    lhs.flow = []
+    stat.procMapPassDown = @lhs.procMapPassDown 
 
   | Seq'
-    lhs.flow = @stat1.flow ++ @stat2.flow ++ map (\x -> (x, @stat2.init)) @stat1.final
-
-  | Malloc'
-    lhs.flow = []
-
-  | Free'
-    lhs.flow = []
-
-  | RefAssign' 
-    lhs.flow = []
-
-  | Continue'    
-    lhs.flow = []  
-
-  | Break'
-    lhs.flow = []-}
+    stat1.procMapPassDown = @lhs.procMapPassDown
+    stat2.procMapPassDown = @lhs.procMapPassDown
 
 -- * Create a labelled AST
 
