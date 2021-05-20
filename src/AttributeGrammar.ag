@@ -250,6 +250,60 @@ sem Stat'
 
 -- inter-flow
 
+attr Program' Procs' Proc' Stat' [ | | interflow :: {[(Int, Int, Int, Int)]} ]
+
+sem Program'
+  | Program'
+    lhs.interflow = @stat.interflow ++ @procs.interflow
+
+sem Proc'
+  | Proc'
+    lhs.interflow = @stat.interflow
+
+sem Procs'
+  | Nil
+    lhs.interflow = []
+  | Cons
+    lhs.interflow = @hd.interflow ++ @tl.interflow      
+
+sem Stat' 
+  | Skip' 
+    lhs.interflow = []         
+
+  | IfThenElse' 
+    lhs.interflow = @stat1.interflow ++ @stat2.interflow
+
+  | While' 
+    lhs.interflow = @stat.interflow        
+  
+  | Call'
+    lhs.interflow = (\(x, y) -> [(@labelCall, x, y, @labelExit)]) (@lhs.procMapPassDown M.! @name)
+    -- Using (!) returns an error if the key is not in the map, but that should not happen.        
+  
+  | IAssign'
+    lhs.interflow = []
+
+  | BAssign'
+    lhs.interflow = []
+
+  | Seq'
+    lhs.interflow = @stat1.interflow ++ @stat2.interflow
+
+  | Malloc'
+    lhs.interflow = []
+
+  | Free'
+    lhs.interflow = []
+
+  | RefAssign' 
+    lhs.interflow = []
+
+  | Continue'    
+    lhs.interflow = []  
+
+  | Break'
+    lhs.interflow = []
+
 -- map procedureName to entry and exit label. 
 
 attr Program' Procs' Proc' [ | | procMapCollect :: { M.Map String (Int, Int) } ]
