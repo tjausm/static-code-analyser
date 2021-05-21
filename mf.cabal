@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e35ed3a1107699cabd6f76f14ce3fe1e0533f36469300523f07717412741894f
+-- hash: 9e0f709f6622e55359ad60b862cc6a3b102375aa7c91f663d03b3dac6d202e0d
 
 name:           mf
 version:        0.1.0.0
@@ -34,6 +34,7 @@ library
       Parser
       Compiler
   other-modules:
+      MFP
       Paths_mf
   hs-source-dirs:
       src

@@ -1776,7 +1776,7 @@ sem_Stat'_Call' labelCall_ labelExit_ name_ params_ out_ =
                    )
               _lhsOfinal =
                   ({-# LINE 170 "AttributeGrammar.ag" #-}
-                   [labelCall_]
+                   [labelExit_]
                    {-# LINE 1781 "AttributeGrammar.hs" #-}
                    )
               _lhsOflow =

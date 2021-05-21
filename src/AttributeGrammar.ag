@@ -167,7 +167,7 @@ sem Stat'
     lhs.final = [@labelc]        
   
   | Call'
-    lhs.final = [@labelCall]          
+    lhs.final = [@labelExit]          
   
   | IAssign'
     lhs.final = [@label]

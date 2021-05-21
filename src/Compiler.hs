@@ -3,6 +3,7 @@ module Compiler where
 import Parser
 import Lexer
 import AttributeGrammar
+import PrettyPrinter
 
 compile :: String -> IO ()
 compile source = do
@@ -14,6 +15,4 @@ compile source = do
   putStrLn ""
   putStrLn "# Program"
   putStrLn $ pretty_Syn_Program' synProgram'
-
-  putStrLn "# Put your output here!"
-  putStrLn "Include things like init, flow and analysis results"
+  putStrLn $ printFlowList $ flow_Syn_Program' synProgram'
