@@ -94,7 +94,7 @@ type Exprs = [Expr]
 data Flow | Intra labels :: {(Int, Int)}
           | Inter labels :: {(Int, Int)}
 
--- * Compute flow, init, final, blocks.
+-- * Compute flow, init, final.
 
 -- Init
 
@@ -339,6 +339,63 @@ sem Stat'
   | Seq'
     stat1.procMapPassDown = @lhs.procMapPassDown
     stat2.procMapPassDown = @lhs.procMapPassDown
+
+-- Get the list of variables used in the program (Var_*)
+
+attr Program' Procs' Proc' Stat' [ | | vars :: {[String]} ]
+
+sem Program'
+  | Program'
+    lhs.vars = L.nub (@stat.vars ++ @procs.vars)
+
+-- Add procedure name as prefix to variables in procedures for unique names. 
+sem Proc'
+  | Proc'
+    lhs.vars = L.nub (map (\x -> @name ++ x) @stat.vars)
+
+sem Procs'
+  | Nil
+    lhs.vars = []
+  | Cons
+    lhs.vars = L.nub (@hd.vars ++ @tl.vars)    
+
+sem Stat' 
+  | Skip' 
+    lhs.vars = []         
+
+  | IfThenElse' 
+    lhs.vars = L.nub (@stat1.vars ++ @stat2.vars)
+
+  | While' 
+    lhs.vars = @stat.vars        
+  
+  -- Variables from procedures get to program via Procs. 
+  | Call'
+    lhs.vars = []
+
+  | IAssign'
+    lhs.vars = [@name]
+
+  | BAssign'
+    lhs.vars = [@name]
+
+  | Seq'
+    lhs.vars = L.nub (@stat1.vars ++ @stat2.vars) 
+
+  | Malloc'
+    lhs.vars = []
+
+  | Free'
+    lhs.vars = []
+
+  | RefAssign' 
+    lhs.vars = []
+
+  | Continue'    
+    lhs.vars = []  
+
+  | Break'
+    lhs.vars = []
 
 -- * Create a labelled AST
 

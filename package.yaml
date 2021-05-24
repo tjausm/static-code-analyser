@@ -36,6 +36,7 @@ library:
     - Lexer
     - Parser
     - Compiler
+    - PrettyPrinter
 
 executables:
   mf-exe:
