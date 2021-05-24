@@ -24,14 +24,23 @@ maximalFixedPoint labels bottom l fancyF f e j lambF =
     -- Step 2
     in undefined -- step2 w f analysis
 
-step2 :: Ord a => [Flow] -> LambdaF a -> [a] -> [a]
-step2 [] lambF analysis = analysis -- if W == Nil return analysis
-step2 (w:ws) lambF analysis =
+step2 :: Ord a => [Flow] -> LambdaF a -> [a] -> L a -> [a]
+step2 [] lambF analysis join = analysis -- if W == Nil return analysis
+step2 (w:ws) lambF analysis join =
     let l = fstLabel w
         l' = sndLabel w
-        fl = (lambF (analysis!!l)) -- get lambda function for label l 
-    in if fl (analysis!!l) > (analysis!!l') then undefined  else undefined 
+        fl = lambF (analysis!!l) -- get lambda function for label l 
+        analysis' = replacel l (analysis!!l' `join` fl (analysis!!l)) analysis -- update l'
+        w' = filter ((l' ==) . fstLabel) (w:ws) -- get all flow tupples of the form (l', _)
+    in if fl (analysis!!l) > (analysis!!l') -- check if transfer function over l > l'
+        then step2 w' lambF analysis' join
+        else analysis          
 
+replacel :: Int -> a -> [a] -> [a]
+replacel l l' w = lhs ++ [l'] ++ rhs
+    where
+        lhs = take (l - 1) w
+        rhs = drop l w
 
 fstLabel :: Flow -> Int
 fstLabel (Intra f) = fst f
