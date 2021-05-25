@@ -1,5 +1,6 @@
 {
 import qualified Data.Map as M
+import qualified Data.Set as S
 import qualified Data.Maybe as Maybe
 import qualified Data.List as L
 }
@@ -396,6 +397,69 @@ sem Stat'
 
   | Break'
     lhs.vars = []
+
+-- LV analysis
+{
+genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> (S.Set String -> S.Set String)
+genLambda lvGen lvKill l  = (S.union $ recklessLookup l lvGen) . (S.intersection (recklessLookup l lvKill))
+  where
+    recklessLookup k m = case M.lookup k m of
+      Nothing -> S.empty 
+      Just n -> n
+}
+
+attr Program'       [ | | lvLambda :: { Int -> (S.Set String -> S.Set String) } ]
+attr Stat' Program' [ | | lvKill use {M.union} {M.empty} :: {M.Map Int (S.Set String)}]
+attr Stat' Program' [ | | lvGen ::  {M.Map Int (S.Set String)}]
+attr IExpr          [ | | freeVars use {S.union} {S.empty} :: {S.Set String}]
+
+sem Program'
+  | Program'
+    lhs.lvLambda = genLambda @stat.lvGen @stat.lvKill
+
+-- LV Kill 
+sem Program'
+  | Program'
+    lhs.lvKill = @stat.lvKill
+
+sem Stat'
+  | Seq'
+    lhs.lvKill = M.union @stat1.lvKill @stat2.lvKill
+  | IfThenElse'
+    lhs.lvKill = M.union @stat1.lvKill @stat2.lvKill
+  | While' 
+    lhs.lvKill = @stat.lvKill
+  | IAssign'
+    lhs.lvKill = M.singleton @label $ S.singleton @name 
+
+
+-- LV Gen
+sem Program'
+  | Program'
+    lhs.lvGen = @stat.lvGen
+
+sem Stat'
+  | Seq'
+    lhs.lvGen = M.union @stat1.lvGen @stat2.lvGen
+  | IfThenElse'
+    lhs.lvGen = M.union @stat1.lvGen @stat2.lvGen
+  | While' 
+    lhs.lvGen = @stat.lvGen
+  | IAssign'
+    lhs.lvGen = M.singleton @label $ @val.freeVars 
+
+sem IExpr
+  | Var
+    lhs.freeVars = S.singleton @name
+  |Plus
+    lhs.freeVars = S.union @left.freeVars @right.freeVars
+  |Minus
+    lhs.freeVars = S.union @left.freeVars @right.freeVars
+  |Times
+    lhs.freeVars = S.union @left.freeVars @right.freeVars
+  |Divide
+    lhs.freeVars = S.union @left.freeVars @right.freeVars
+  
 
 -- * Create a labelled AST
 
