@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9e0f709f6622e55359ad60b862cc6a3b102375aa7c91f663d03b3dac6d202e0d
+-- hash: 2318e9eabd76c2d90867d12c8cfee3104124c80d3ea837dd812d7ad5c45cd06f
 
 name:           mf
 version:        0.1.0.0
@@ -33,6 +33,7 @@ library
       Lexer
       Parser
       Compiler
+      PrettyPrinter
   other-modules:
       MFP
       Paths_mf

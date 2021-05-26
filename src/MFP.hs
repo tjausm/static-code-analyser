@@ -1,5 +1,7 @@
 module MFP where
 import AttributeGrammar
+import qualified Data.Map as M
+import Data.Maybe (fromMaybe)
 
 
 
@@ -11,7 +13,7 @@ data FlowDir = Backward | Forward deriving Eq-- flow direction
 type E = [Int] -- extremal labels
 type J a = a -- extremal value
 type Bottom a = a
-type LambdaF a = a -> (a -> a) -- mapping labels to transfer functions
+type LambdaF a = M.Map Int (a -> a) -- mapping labels to transfer functions
 
 -- TODO: should bottom be passed as an argument?
 -- Should a have both Eq and Ord typeclass since it should be a partial order
@@ -26,14 +28,14 @@ maximalFixedPoint labels bottom join fancyF f e j lambF =
 step2 :: Ord a => F -> LambdaF a -> [a] -> L a ->  [a]
 step2 (MkFlow _ []) lambF analysis join = analysis -- if W == Nil return analysis
 step2 (MkFlow dir (w:ws)) lambF analysis join =
-    let l = if dir == Forward then fstLabel w else sndLabel w 
+    let l = if dir == Forward then fstLabel w else sndLabel w
         l' = if dir == Backward then sndLabel w else fstLabel w
-        fl = lambF (analysis!!l) -- get lambda function for label l 
+        fl = fromMaybe id (M.lookup l lambF) -- get lambda function for label l 
         analysis' = replacel l (analysis!!l' `join` fl (analysis!!l)) analysis -- update l'
         w' = filter ((l' ==) . fstLabel) (w:ws) -- get all flow tupples of the form (l', _)
     in if fl (analysis!!l) > (analysis!!l') -- check if transfer function over l > l'
         then step2 (MkFlow dir w') lambF analysis' join
-        else analysis 
+        else analysis
 
 replacel :: Int -> a -> [a] -> [a]
 replacel l l' w = lhs ++ [l'] ++ rhs
@@ -54,5 +56,3 @@ getFlow (MkFlow _ f) = f
 
 getDir :: F -> FlowDir
 getDir (MkFlow d _) = d
-
-
