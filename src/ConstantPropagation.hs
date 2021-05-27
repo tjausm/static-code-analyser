@@ -7,9 +7,9 @@ import qualified Data.Set as S
 
 data Ztop = Int Int | Top deriving (Eq, Show, Ord)
 
-constantPropagationAnalysis :: Labels -> [Flow] -> Int -> [String] -> M.Map Int Block -> [(M.Map String Ztop, M.Map String Ztop)]
-constantPropagationAnalysis ls fs i vs ibmap = maximalFixedPoint (MkLattice join (bottom vs)) M.empty 
-                                               (MkFlow Forward fs) [i] (bottom vs) (lambdaF ibmap) ls 
+constantPropagationAnalysis :: [Flow] -> Int -> [String] -> M.Map Int Block -> [(M.Map String Ztop, M.Map String Ztop)]
+constantPropagationAnalysis fs i vs ibmap = maximalFixedPoint (MkLattice join (bottom vs))  
+                                            (MkFlow Forward fs) [i] (bottom vs) (lambdaF ibmap)
 
 bottom :: [String] -> M.Map String Ztop
 bottom vs = M.fromList (zip vs (replicate (length vs) Top))
