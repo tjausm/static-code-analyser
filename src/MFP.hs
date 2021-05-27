@@ -18,37 +18,36 @@ data FlowDir = Backward | Forward deriving Eq-- flow direction
 -- TODO: should bottom be passed as an argument?
 -- Should a have both Eq and Ord typeclass since it should be a partial order
 maximalFixedPoint :: Show a => Ord a => L a -> FancyF a -> F -> E -> J a -> LambdaF a ->  Labels ->  [(a,a)]
-maximalFixedPoint lattice@(MkLattice _ bottom) fancyF f@(MkFlow _ flow) e j lambF labels =
+maximalFixedPoint lattice@(MkLattice _ bottom) fancyF flow@(MkFlow _ w) e j lambF labels =
     -- Step 1
-    let labels = genLabels flow
-        w = f
+    let labels = genLabels w
         analysis = map (\label -> if  label `elem` e then j else bottom) labels -- labels set extremal labels to jota
     -- Step 2
-    in trace ("analysis = " ++ show analysis) $ 
-        step3 lambF $ 
-        step2 lattice w flow lambF analysis
+    in  step3 lambF $ 
+        step2 lattice flow w lambF analysis
 
 step2 :: Show a => Ord a =>  L a -> F -> [Flow] -> LambdaF a -> [a] ->  [a]
-step2 _ (MkFlow _ []) _ _ analysis = analysis                                                 -- if W == Nil return analysis
-step2 lattice@(MkLattice join bottom) (MkFlow dir f) (w:ws) lambF analysis  =
+step2 _ _ [] _ analysis = analysis                                                 -- if W == Nil return analysis
+step2 lattice@(MkLattice join bottom) flow@(MkFlow dir f) (w:ws) lambF analysis  =
     let l = if dir == Forward then fstLabel w else sndLabel w                        -- lower 1 index because haskell lists start at 0
         l' = if dir == Forward then sndLabel w  else fstLabel w 
         fl = lambF l                                                                        -- get lambda function for label l 
-        analysis' = replacel (l'-1) (analysis!!(l'-1) `join` fl (analysis!!(l-1))) analysis              -- update l'
-        w' = if dir == Forward then filter ((l' ==) . fstLabel) ws else filter ((l' ==) . sndLabel) ws  -- get all flow tupples of the form (l', _)
+        analysis' = replacel l' (analysis!!(l'-1) `join` fl (analysis!!(l-1))) analysis              -- update l'
+        w' = if dir == Forward then filter ((l' ==) . fstLabel) ws else filter ((l' ==) . sndLabel) f  -- get all flow tupples of the form (l', _) from the flow
     in
-        if  trace ("step2: (w:ws) = " ++ unlines (map showFlow (w:ws))) 
+        if  trace ("\n\nanalysis = " ++ show analysis)
+            trace ("step2: (w:ws) = " ++ unwords (map showFlow (w:ws))) 
             trace ("step2: w' = " ++ unlines (map showFlow w')) 
             trace ("step2: l = " ++ show l  ++ ", l' = " ++ show l' )
-            trace ("step2: if " ++ map show analysis!!(l-1) ++ ">" ++ map show analysis!!(l'-1)) $
+            trace ("step2: if " ++  show (fl (analysis!!(l-1))) ++ ">" ++ show (analysis!!(l'-1)) ++ " = " ++ show (fl (analysis!!(l-1)) > analysis!!(l'-1))) $
 
             fl (analysis!!(l-1)) > analysis!!(l'-1)  -- check if transfer function over l > l'
-        then step2 lattice (MkFlow dir (w' ++ ws)) f lambF analysis' -- recurse with updated analysis (maybe we can just recurse anyhow with updated value?)
-        else step2 lattice (MkFlow dir ws) f lambF analysis -- recurse without updated analysis
+        then step2 lattice flow (w' ++ ws) lambF analysis' -- recurse with updated analysis (maybe we can just recurse anyhow with updated value?)
+        else step2 lattice flow ws lambF analysis -- recurse without updated analysis
 
--- return result as tupples of entry and exit value
+-- return result as tupples of (entry,exit) value
 step3 :: LambdaF a -> [a] -> [(a,a)]
-step3 lambF analysis = zip analysis analysis'
+step3 lambF analysis = zip analysis' analysis 
     where
         analysis' = map (\(f,a) -> f a) (zip fl analysis)
         fl = map lambF [i | i <- [1..(length  analysis)]]
@@ -89,7 +88,7 @@ showMFP :: (a -> String) -> [(a,a)] -> String
 showMFP showPoint mfp = unlines (mergeList labels sMfp)
     where
         labels = [show i | i <- [1.. (length sMfp)]]
-        sMfp = map  (\(x,y) -> "Entry: \n" ++ showPoint x ++ "Exit: \n" ++ showPoint y) mfp
+        sMfp = map  (\(x,y) -> "Entry: \n" ++ showPoint x ++ "\nExit: \n" ++ showPoint y) mfp
 
 -- intersperse 2 lists [a,b] -> [1,2] -> [a,1,b,2]
 mergeList::[a]->[a]->[a]

@@ -400,18 +400,22 @@ sem Stat'
 
 -- LV analysis
 {
-genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> (S.Set String -> S.Set String)
-genLambda lvGen lvKill l  = (S.union $ recklessLookup l lvGen) . (S.intersection (recklessLookup l lvKill))
+data LVSet = MkSet (S.Set String)
+
+genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> (LVSet -> LVSet)
+genLambda lvGen lvKill l = setToLVSet . (S.union $ recklessLookup l lvGen) . (flip S.difference $ recklessLookup l lvKill) . lvSetToSet
   where
     recklessLookup k m = case M.lookup k m of
-      Nothing -> S.empty 
+      Nothing -> S.empty
       Just n -> n
+    lvSetToSet (MkSet x) = x
+    setToLVSet x = MkSet x
 }
 
-attr Program'       [ | | lvLambda :: { Int -> (S.Set String -> S.Set String) } ]
+attr Program'       [ | | lvLambda :: { Int -> (LVSet-> LVSet) } ]
 attr Stat' Program' [ | | lvKill use {M.union} {M.empty} :: {M.Map Int (S.Set String)}]
 attr Stat' Program' [ | | lvGen ::  {M.Map Int (S.Set String)}]
-attr IExpr          [ | | freeVars use {S.union} {S.empty} :: {S.Set String}]
+attr IExpr BExpr    [ | | freeVars use {S.union} {S.empty} :: {S.Set String}]
 
 sem Program'
   | Program'
@@ -442,9 +446,9 @@ sem Stat'
   | Seq'
     lhs.lvGen = M.union @stat1.lvGen @stat2.lvGen
   | IfThenElse'
-    lhs.lvGen = M.union @stat1.lvGen @stat2.lvGen
+    lhs.lvGen = M.union (M.singleton @labelc @cond.freeVars) $ M.union  @stat1.lvGen @stat2.lvGen
   | While' 
-    lhs.lvGen = @stat.lvGen
+    lhs.lvGen = M.union (M.singleton @labelc @cond.freeVars) @stat.lvGen
   | IAssign'
     lhs.lvGen = M.singleton @label $ @val.freeVars 
 
@@ -459,7 +463,17 @@ sem IExpr
     lhs.freeVars = S.union @left.freeVars @right.freeVars
   |Divide
     lhs.freeVars = S.union @left.freeVars @right.freeVars
-  
+sem BExpr
+  | LessThan
+    lhs.freeVars = S.union @left.freeVars @right.freeVars
+  | GreaterThan
+    lhs.freeVars = S.union @left.freeVars @right.freeVars
+  | LessEqual 
+    lhs.freeVars = S.union @left.freeVars @right.freeVars
+  | GreaterEqual 
+    lhs.freeVars = S.union @left.freeVars @right.freeVars
+  | IEqual   
+    lhs.freeVars = S.union @left.freeVars @right.freeVars
 
 -- * Create a labelled AST
 

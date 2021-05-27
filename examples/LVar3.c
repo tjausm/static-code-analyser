@@ -4,8 +4,7 @@ begin
     x := 1;
     if y > x then
         z := y;
-    else{
+    else
         z := y * y;
-        x := z;
-    }
+    x := z;
 end

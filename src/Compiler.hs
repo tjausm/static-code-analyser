@@ -5,7 +5,7 @@ import Lexer
 import AttributeGrammar
 import PrettyPrinter
 import MFP
-import LVAnalysis (lvL, lvFancyF, lvF)
+import LVAnalysis 
 
 import qualified Data.Map.Internal.Debug as MD
 import qualified Data.Map as M
@@ -36,10 +36,11 @@ compile source = do
 
   let flow = flow_Syn_Program' synProgram'
   let e = final_Syn_Program' synProgram'
-  let bottom = S.fromList $ vars_Syn_Program' synProgram'
+  let bottom = MkSet $ S.fromList $ vars_Syn_Program' synProgram'
   let lambdaF = lvLambda_Syn_Program' synProgram'
   let labels = genLabels flow
-  let test = maximalFixedPoint (lvL bottom) lvFancyF (lvF flow) e S.empty  lambdaF labels
-  putStrLn $ showMFP S.showTree test
+  let jotta = MkSet S.empty 
+  let test = maximalFixedPoint (lvL jotta) lvFancyF (lvF flow) e jotta lambdaF labels
+  putStrLn $ showMFP (show . (\(MkSet x) -> x)) test
 
 
