@@ -37,6 +37,10 @@ library:
     - Parser
     - Compiler
     - PrettyPrinter
+  other-modules:
+    - ConstantPropagation
+    - LVAnalysis
+    - MFP
 
 executables:
   mf-exe:

@@ -95,6 +95,9 @@ type Exprs = [Expr]
 data Flow | Intra labels :: {(Int, Int)}
           | Inter labels :: {(Int, Int)}
 
+data Block | E expr :: Expr
+           | S stat :: Stat'
+
 -- * Compute flow, init, final.
 
 -- Init
@@ -459,7 +462,61 @@ sem IExpr
     lhs.freeVars = S.union @left.freeVars @right.freeVars
   |Divide
     lhs.freeVars = S.union @left.freeVars @right.freeVars
+
+-- Create a mapping from labels to their corresponding block. 
+
+attr Program' Procs' Proc' Stat'[ | | labelBlockMapCollect :: { M.Map Int Block } ]
+
+sem Program'
+  | Program'
+    lhs.labelBlockMapCollect = M.union @procs.labelBlockMapCollect @stat.labelBlockMapCollect
+
+sem Proc'
+  | Proc'
+    lhs.labelBlockMapCollect = @stat.labelBlockMapCollect
+
+sem Procs'
+  | Nil
+    lhs.labelBlockMapCollect = M.empty
+  | Cons
+    lhs.labelBlockMapCollect = M.union @hd.labelBlockMapCollect @tl.labelBlockMapCollect  
+
+sem Stat' 
+  | Skip' 
+    lhs.labelBlockMapCollect = M.singleton @label (S @self)         
+
+  | IfThenElse' 
+    lhs.labelBlockMapCollect = M.union (M.singleton @labelc (E (B @cond.self))) (M.union @stat1.labelBlockMapCollect @stat2.labelBlockMapCollect)
+
+  | While' 
+    lhs.labelBlockMapCollect = M.union (M.singleton @labelc (E (B @cond.self))) @stat.labelBlockMapCollect      
   
+  | Call'
+    lhs.labelBlockMapCollect = undefined          
+  
+  | IAssign'
+    lhs.labelBlockMapCollect = M.singleton @label (S @self)
+
+  | BAssign'
+    lhs.labelBlockMapCollect = M.singleton @label (S @self)
+
+  | Seq'
+    lhs.labelBlockMapCollect = M.union @stat1.labelBlockMapCollect @stat2.labelBlockMapCollect
+
+  | Malloc'
+    lhs.labelBlockMapCollect = M.singleton @label (S @self)
+
+  | Free'
+    lhs.labelBlockMapCollect = M.singleton @label (S @self)
+
+  | RefAssign' 
+    lhs.labelBlockMapCollect = M.singleton @label (S @self)
+
+  | Continue'    
+    lhs.labelBlockMapCollect = M.singleton @label (S @self)  
+
+  | Break'
+    lhs.labelBlockMapCollect = M.singleton @label (S @self)
 
 -- * Create a labelled AST
 

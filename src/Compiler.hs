@@ -6,6 +6,7 @@ import AttributeGrammar
 import PrettyPrinter
 import MFP
 import LVAnalysis (lvL, lvFancyF, lvF)
+import ConstantPropagation
 
 import qualified Data.Map.Internal.Debug as MD
 import qualified Data.Map as M
@@ -33,13 +34,19 @@ compile source = do
   putStrLn  "\n LV Gen sets"
   putStrLn $ MD.showTree $ lvGen_Syn_Program' synProgram'
   putStrLn  "\n LV analysis"
+ 
 
   let flow = flow_Syn_Program' synProgram'
   let e = final_Syn_Program' synProgram'
+  let i = init_Syn_Program' synProgram'
+  let vars = vars_Syn_Program' synProgram'
+  let ibmap = labelBlockMapCollect_Syn_Program' synProgram'
   let bottom = S.fromList $ vars_Syn_Program' synProgram'
   let lambdaF = lvLambda_Syn_Program' synProgram'
   let labels = genLabels flow
   let test = maximalFixedPoint (lvL bottom) lvFancyF (lvF flow) e S.empty  lambdaF labels
   putStrLn $ showMFP S.showTree test
 
-
+  putStrLn "\n Constant Propagation"
+  let testcp = constantPropagationAnalysis labels flow i vars ibmap
+  putStrLn $ showMFP (\x -> show (M.toList x)) testcp

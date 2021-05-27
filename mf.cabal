@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 07cffcec38e39684d91814a8a232e9fc96b9e4186a0400868739b55f265c7d01
+-- hash: 953ec3895483fff02b57c3fb70091a408b5a21aa59befca7391ffb22630f8d6b
 
 name:           mf
 version:        0.1.0.0
@@ -35,9 +35,9 @@ library
       Compiler
       PrettyPrinter
   other-modules:
+      ConstantPropagation
       LVAnalysis
       MFP
-      Paths_mf
   hs-source-dirs:
       src
   build-depends:
