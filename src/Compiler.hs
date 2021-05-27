@@ -26,21 +26,13 @@ compile source = do
   print (init_Syn_Program' synProgram')
   putStrLn "Final"
   print (final_Syn_Program' synProgram')
-  putStrLn "Vars"
-  print (vars_Syn_Program' synProgram')
-  putStrLn  "\n LV Kill sets"
-  putStrLn $ MD.showTree $ lvKill_Syn_Program' synProgram'
-  putStrLn  "\n LV Gen sets"
-  putStrLn $ MD.showTree $ lvGen_Syn_Program' synProgram'
+  -- Set-up and show Live variable analysis
   putStrLn  "\n LV analysis"
-
   let flow = flow_Syn_Program' synProgram'
   let e = final_Syn_Program' synProgram'
-  let bottom = MkSet $ S.fromList $ vars_Syn_Program' synProgram'
   let lambdaF = lvLambda_Syn_Program' synProgram'
-  let labels = genLabels flow
   let jotta = MkSet S.empty 
-  let test = maximalFixedPoint (lvL jotta) lvFancyF (lvF flow) e jotta lambdaF labels
-  putStrLn $ showMFP (show . (\(MkSet x) -> x)) test
+  let lvResult = maximalFixedPoint (lvL jotta) (lvF flow) e jotta lambdaF 
+  putStrLn $ showMFP (show . (\(MkSet x) -> x)) lvResult
 
 

@@ -401,7 +401,6 @@ sem Stat'
 -- LV analysis
 {
 data LVSet = MkSet (S.Set String)
-
 genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> (LVSet -> LVSet)
 genLambda lvGen lvKill l = setToLVSet . (S.union $ recklessLookup l lvGen) . (flip S.difference $ recklessLookup l lvKill) . lvSetToSet
   where
