@@ -22,7 +22,7 @@ maximalFixedPoint lattice@(MkLattice _ bottom)  flow@(MkFlow _ w) e j lambF  =
     let labels = genLabels w
         analysis = map (\label -> if  label `elem` e then j else bottom) labels -- labels set extremal labels to jota
     -- Step 2
-    in  step3 lambF $
+    in  step3 lambF flow $
         step2 lattice flow w lambF analysis
 
 step2 :: Show a => Ord a =>  L a -> F -> [Flow] -> LambdaF a -> [a] ->  [a]
@@ -40,8 +40,8 @@ step2 lattice@(MkLattice join bottom) flow@(MkFlow dir f) (w:ws) lambF analysis 
         else step2 lattice flow ws lambF analysis               -- recurse without updated analysis
 
 -- return result as tupples of (entry,exit) value
-step3 :: LambdaF a -> [a] -> [(a,a)]
-step3 lambF analysis = zip analysis' analysis
+step3 :: LambdaF a -> F -> [a] -> [(a,a)]
+step3 lambF (MkFlow dir f) analysis = if dir == Forward then zip analysis analysis' else zip analysis' analysis
     where
         analysis' = zipWith (\ f a -> f a) fl analysis
         fl = [lambF i | i <- [1 .. (length analysis)]]
