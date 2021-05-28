@@ -42,6 +42,9 @@ compile source = do
   let lvResult = maximalFixedPoint (lvL jotta) (lvF flow) e jotta lambdaF 
   putStrLn $ showMFP (show . (\(MkSet x) -> x)) lvResult
 
+  {--
   putStrLn "\n Constant Propagation"
   let testcp = constantPropagationAnalysis flow i vars ibmap
   putStrLn $ showMFP (\x -> show (M.toList x)) testcp
+  --}
+

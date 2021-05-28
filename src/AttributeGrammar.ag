@@ -416,7 +416,7 @@ genLambda lvGen lvKill l = setToLVSet . (S.union $ recklessLookup l lvGen) . (fl
 
 attr Program'       [ | | lvLambda :: { Int -> (LVSet-> LVSet) } ]
 attr Stat' Program' [ | | lvKill use {M.union} {M.empty} :: {M.Map Int (S.Set String)}]
-attr Stat' Program' [ | | lvGen ::  {M.Map Int (S.Set String)}]
+attr Stat' Program' [ | | lvGen use {M.union} {M.empty} ::  {M.Map Int (S.Set String)}]
 attr IExpr BExpr    [ | | freeVars use {S.union} {S.empty} :: {S.Set String}]
 
 sem Program'
