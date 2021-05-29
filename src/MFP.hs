@@ -5,7 +5,10 @@ import Data.Maybe (fromMaybe)
 import Data.List (intersperse)
 import Debug.Trace
 
+type Delta = [Int] 
+
 data L a =  MkLattice (a -> a -> a) (Bottom a) -- Lattice Join
+type EmbellishedL a = M.Map Delta [a] -- Not sure about the list yet.  
 data F = MkFlow FlowDir [Flow]
 type E = [Int] -- extremal labels
 type J a = a -- extremal value
@@ -26,12 +29,12 @@ maximalFixedPoint lattice@(MkLattice _ bottom)  flow@(MkFlow _ w) e j lambF  =
         step2 lattice flow w lambF analysis
 
 step2 :: Show a => Ord a =>  L a -> F -> [Flow] -> LambdaF a -> [a] ->  [a]
-step2 _ _ [] _ analysis = analysis                                                 -- if W == Nil return analysis
+step2 _ _ [] _ analysis = analysis                                                                     -- if W == Nil return analysis
 step2 lattice@(MkLattice join bottom) flow@(MkFlow dir f) (w:ws) lambF analysis  =
-    let l = if dir == Forward then fstLabel w else sndLabel w                        -- lower 1 index because haskell lists start at 0
+    let l = if dir == Forward then fstLabel w else sndLabel w                                         -- lower 1 index because haskell lists start at 0
         l' = if dir == Forward then sndLabel w  else fstLabel w
-        fl = lambF l                                                                        -- get lambda function for label l 
-        analysis' = replacel l' (analysis!!(l'-1) `join` fl (analysis!!(l-1))) analysis              -- update l'
+        fl = lambF l                                                                                  -- get lambda function for label l 
+        analysis' = replacel l' (analysis!!(l'-1) `join` fl (analysis!!(l-1))) analysis               -- update l'
         w' = if dir == Forward then filter ((l' ==) . fstLabel) f else filter ((l' ==) . sndLabel) f  -- get all flow tupples of the form (l', _) from the flow
     in
         if  -- logStep analysis (w:ws) w' l l' fl $             -- Uncomment to trace algorithm
@@ -63,8 +66,8 @@ replacel l l' w = lhs ++ [l'] ++ rhs
 
 -- Functions to easily process Flow type
 instance Show Flow where
-    show (Inter f) = show f
-    show (Intra f) = show f
+    show (Inter (a,b)) = show "( " ++ show a ++ show  ";" ++ show b ++ show ")"
+    show (Intra (a,b)) = show "( " ++ show a ++ show  "," ++ show b ++ show ")"
 fstLabel :: Flow -> Int
 fstLabel (Intra f) = fst f
 fstLabel (Inter f) = fst f

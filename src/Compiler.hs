@@ -12,6 +12,9 @@ import qualified Data.Map.Internal.Debug as MD
 import qualified Data.Map as M
 import qualified Data.Set as S
 
+k :: Int
+k = 2
+
 compile :: String -> IO ()
 compile source = do
   let program = happy $ alex source
@@ -39,10 +42,12 @@ compile source = do
   let bottom = S.fromList $ vars_Syn_Program' synProgram'
   let lambdaF = lvLambda_Syn_Program' synProgram'
   let jotta = MkSet S.empty 
+  let lpmap = labelProcMapCollect_Syn_Program' synProgram'
+
   let lvResult = maximalFixedPoint (lvL jotta) (lvF flow) e jotta lambdaF 
   putStrLn $ showMFP (show . (\(MkSet x) -> x)) lvResult
 
   putStrLn "\n Constant Propagation"
-  let testcp = constantPropagationAnalysis flow i vars ibmap
+  let testcp = constantPropagationAnalysis flow i vars ibmap lpmap
   putStrLn $ showMFP (\x -> show (M.toList x)) testcp
 

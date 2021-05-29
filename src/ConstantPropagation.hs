@@ -7,7 +7,7 @@ import AttributeGrammar
 import qualified Data.Map as M
 import qualified Data.Set as S
 
-data Ztb = Int Int | Top | Bottom deriving (Eq, Show)
+data Ztb = Int Int | Top | Bottom deriving (Eq, Show) 
 
 instance Ord Ztb where
     compare Bottom Bottom   = EQ
@@ -26,9 +26,9 @@ instance {-# OVERLAPPING #-} Ord (M.Map String Ztb) where
                             (y:ys) -> if x > y then GT 
                                                else compare (M.fromList xs) (M.fromList ys) 
 
-constantPropagationAnalysis :: [Flow] -> Int -> [String] -> M.Map Int Block -> [(M.Map String Ztb, M.Map String Ztb)]
-constantPropagationAnalysis fs i vs ibmap = maximalFixedPoint (MkLattice join (bottom vs))  
-                                            (MkFlow Forward fs) [i] (bottom vs) (lambdaF ibmap)
+constantPropagationAnalysis :: [Flow] -> Int -> [String] -> M.Map Int Block -> M.Map Int String -> [(M.Map String Ztb, M.Map String Ztb)]
+constantPropagationAnalysis fs i vs ibmap lpmap = maximalFixedPoint (MkLattice join (bottom vs))  
+                                                  (MkFlow Forward fs) [i] (bottom vs) (lambdaF ibmap lpmap)
 
 bottom :: [String] -> M.Map String Ztb
 bottom vs = M.fromList (zip vs (replicate (length vs) Bottom))
@@ -42,12 +42,14 @@ elementJoin Bottom  x                = x
 elementJoin x       Bottom           = x
 elementJoin _       _                = Top 
 
-lambdaF :: M.Map Int Block -> Int -> M.Map String Ztb -> M.Map String Ztb
-lambdaF ib i m = transferFromBlock (M.findWithDefault (S (Skip' 0)) i ib) m
+lambdaF :: M.Map Int Block -> M.Map Int String -> Int -> M.Map String Ztb -> M.Map String Ztb
+lambdaF ib lp i m = transferFromBlock (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) m
 
-transferFromBlock :: Block -> M.Map String Ztb -> M.Map String Ztb
-transferFromBlock (S (IAssign' l n v)) m = M.insert n (analyseExpression v m) m                     
-transferFromBlock _                    m = m
+-- String is the enclosing procedure name (empty if none) for the prefix of variables within procedures. 
+transferFromBlock :: Block -> String -> M.Map String Ztb -> M.Map String Ztb
+transferFromBlock (S (IAssign' l n v))     p m = M.insert (p ++ n) (analyseExpression v m) m 
+transferFromBlock (S (Call' lc lr n ps o)) p m = m                    
+transferFromBlock _                        p m = m
 
 analyseExpression :: IExpr -> M.Map String Ztb -> Ztb
 analyseExpression (IConst i)   m = Int i

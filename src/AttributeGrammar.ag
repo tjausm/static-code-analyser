@@ -206,7 +206,7 @@ sem Program'
 
 sem Proc'
   | Proc'
-    lhs.flow = @stat.flow
+    lhs.flow = Intra (@labelEntry, @stat.init) : @stat.flow ++ map (\x -> Intra (x, @labelReturn)) @stat.final
 
 sem Procs'
   | Nil
@@ -373,9 +373,10 @@ sem Stat'
   | While' 
     lhs.vars = @stat.vars        
   
-  -- Variables from procedures get to program via Procs. 
+  -- Variables from procedures get to program via Procs. We de have to add the out value of the call
+  -- as a variable. 
   | Call'
-    lhs.vars = []
+    lhs.vars = [@out]
 
   | IAssign'
     lhs.vars = [@name]
@@ -507,7 +508,7 @@ sem Stat'
     lhs.labelBlockMapCollect = M.union (M.singleton @labelc (E (B @cond.self))) @stat.labelBlockMapCollect      
   
   | Call'
-    lhs.labelBlockMapCollect = undefined          
+    lhs.labelBlockMapCollect = M.singleton @labelCall (S @self)       
   
   | IAssign'
     lhs.labelBlockMapCollect = M.singleton @label (S @self)
@@ -533,6 +534,74 @@ sem Stat'
   | Break'
     lhs.labelBlockMapCollect = M.singleton @label (S @self)
 
+-- Map label to the procedure name it is contained in (empty string if none).
+
+attr Program' Procs' Proc' [ | | labelProcMapCollect :: { M.Map Int String } ]
+attr Stat' [ | | labels :: { [Int] } ]
+attr Procs' Proc' Stat' [ labelProcMapPassDown :: { M.Map Int String } | | ]
+
+sem Program'
+  | Program'
+    lhs.labelProcMapCollect = @procs.labelProcMapCollect
+    stat.labelProcMapPassDown = @procs.labelProcMapCollect
+    procs.labelProcMapPassDown = @procs.labelProcMapCollect
+
+sem Proc'
+  | Proc'
+    lhs.labelProcMapCollect = M.union (M.union (M.singleton @labelEntry @name) (M.singleton @labelReturn @name))
+                              (M.fromList (zip @stat.labels (replicate (length @stat.labels) @name)))
+    stat.labelProcMapPassDown = @lhs.labelProcMapPassDown
+
+sem Procs'
+  | Nil
+    lhs.labelProcMapCollect = M.empty
+  | Cons
+    lhs.labelProcMapCollect = M.union @hd.labelProcMapCollect @tl.labelProcMapCollect
+    hd.labelProcMapPassDown = @lhs.labelProcMapPassDown
+    tl.labelProcMapPassDown = @lhs.labelProcMapPassDown     
+
+sem Stat'
+  | Skip' 
+    lhs.labels = [@label]       
+
+  | IfThenElse' 
+    stat1.labelProcMapPassDown = @lhs.labelProcMapPassDown
+    stat2.labelProcMapPassDown = @lhs.labelProcMapPassDown
+    lhs.labels = @labelc : @stat1.labels ++ @stat2.labels
+
+  | While' 
+    stat.labelProcMapPassDown = @lhs.labelProcMapPassDown
+    lhs.labels = @labelc : @stat.labels     
+  
+  | Call'
+    lhs.labels = @labelExit : [@labelCall]       
+  
+  | IAssign'
+    lhs.labels = [@label]
+
+  | BAssign'
+    lhs.labels = [@label]
+
+  | Seq'
+    stat1.labelProcMapPassDown = @lhs.labelProcMapPassDown
+    stat2.labelProcMapPassDown = @lhs.labelProcMapPassDown
+    lhs.labels = @stat1.labels ++ @stat2.labels
+
+  | Malloc'
+    lhs.labels = [@label]
+
+  | Free'
+    lhs.labels = [@label]
+
+  | RefAssign' 
+    lhs.labels = [@label]
+
+  | Continue'    
+    lhs.labels = [@label]  
+
+  | Break'
+    lhs.labels = [@label]
+  
 -- * Create a labelled AST
 
 attr Proc Procs Stat [ | label :: Int | ]
