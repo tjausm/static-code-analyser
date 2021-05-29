@@ -32,7 +32,7 @@ step2 lattice@(MkLattice join bottom) flow@(MkFlow dir f) (w:ws) lambF analysis 
         l' = if dir == Forward then sndLabel w  else fstLabel w
         fl = lambF l                                                                        -- get lambda function for label l 
         analysis' = replacel l' (analysis!!(l'-1) `join` fl (analysis!!(l-1))) analysis              -- update l'
-        w' = if dir == Forward then filter ((l ==) . sndLabel) f else filter ((l' ==) . sndLabel) f  -- get all flow tupples of the form (l', _) from the flow
+        w' = if dir == Forward then filter ((l' ==) . fstLabel) f else filter ((l' ==) . sndLabel) f  -- get all flow tupples of the form (l', _) from the flow
     in
         if  -- logStep analysis (w:ws) w' l l' fl $             -- Uncomment to trace algorithm
             fl (analysis!!(l-1)) > analysis!!(l'-1)             -- check if transfer function over l > l'

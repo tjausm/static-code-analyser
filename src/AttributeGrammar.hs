@@ -2157,9 +2157,9 @@ sem_Stat'_Skip' label_ =
               _lhsOpretty :: ( [String] )
               _lhsOisSkip :: Bool
               _lhsOisSingle :: Bool
+              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOlvKill :: (M.Map Int (S.Set String))
               _lhsOself :: Stat'
-              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOinit =
                   ({-# LINE 117 "AttributeGrammar.ag" #-}
                    label_
@@ -2205,20 +2205,20 @@ sem_Stat'_Skip' label_ =
                    True
                    {-# LINE 2207 "AttributeGrammar.hs" #-}
                    )
+              _lhsOlvGen =
+                  ({-# LINE 419 "AttributeGrammar.ag" #-}
+                   M.empty
+                   {-# LINE 2212 "AttributeGrammar.hs" #-}
+                   )
               _lhsOlvKill =
                   ({-# LINE 418 "AttributeGrammar.ag" #-}
                    M.empty
-                   {-# LINE 2212 "AttributeGrammar.hs" #-}
+                   {-# LINE 2217 "AttributeGrammar.hs" #-}
                    )
               _self =
                   Skip' label_
               _lhsOself =
                   _self
-              _lhsOlvGen =
-                  ({-# LINE 419 "AttributeGrammar.ag" #-}
-                   error "missing rule: Stat'.Skip'.lhs.lvGen"
-                   {-# LINE 2221 "AttributeGrammar.hs" #-}
-                   )
           in  ( _lhsOfinal,_lhsOflow,_lhsOinit,_lhsOinterflow,_lhsOisSingle,_lhsOisSkip,_lhsOlabelBlockMapCollect,_lhsOlvGen,_lhsOlvKill,_lhsOpretty,_lhsOself,_lhsOvars)))
 sem_Stat'_IfThenElse' :: Int ->
                          T_BExpr ->
@@ -2474,9 +2474,9 @@ sem_Stat'_Call' labelCall_ labelExit_ name_ params_ out_ =
               _lhsOpretty :: ( [String] )
               _lhsOisSkip :: Bool
               _lhsOisSingle :: Bool
+              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOlvKill :: (M.Map Int (S.Set String))
               _lhsOself :: Stat'
-              _lhsOlvGen :: (M.Map Int (S.Set String))
               _paramsIpretty :: String
               _paramsIself :: Exprs
               _lhsOinit =
@@ -2524,20 +2524,20 @@ sem_Stat'_Call' labelCall_ labelExit_ name_ params_ out_ =
                    True
                    {-# LINE 2526 "AttributeGrammar.hs" #-}
                    )
+              _lhsOlvGen =
+                  ({-# LINE 419 "AttributeGrammar.ag" #-}
+                   M.empty
+                   {-# LINE 2531 "AttributeGrammar.hs" #-}
+                   )
               _lhsOlvKill =
                   ({-# LINE 418 "AttributeGrammar.ag" #-}
                    M.empty
-                   {-# LINE 2531 "AttributeGrammar.hs" #-}
+                   {-# LINE 2536 "AttributeGrammar.hs" #-}
                    )
               _self =
                   Call' labelCall_ labelExit_ name_ _paramsIself out_
               _lhsOself =
                   _self
-              _lhsOlvGen =
-                  ({-# LINE 419 "AttributeGrammar.ag" #-}
-                   error "missing rule: Stat'.Call'.lhs.lvGen"
-                   {-# LINE 2540 "AttributeGrammar.hs" #-}
-                   )
               ( _paramsIpretty,_paramsIself) =
                   params_
           in  ( _lhsOfinal,_lhsOflow,_lhsOinit,_lhsOinterflow,_lhsOisSingle,_lhsOisSkip,_lhsOlabelBlockMapCollect,_lhsOlvGen,_lhsOlvKill,_lhsOpretty,_lhsOself,_lhsOvars)))
@@ -2640,9 +2640,9 @@ sem_Stat'_BAssign' label_ name_ val_ =
               _lhsOpretty :: ( [String] )
               _lhsOisSkip :: Bool
               _lhsOisSingle :: Bool
+              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOlvKill :: (M.Map Int (S.Set String))
               _lhsOself :: Stat'
-              _lhsOlvGen :: (M.Map Int (S.Set String))
               _valIfreeVars :: (S.Set String)
               _valIprecedence :: Int
               _valIpretty :: String
@@ -2692,20 +2692,20 @@ sem_Stat'_BAssign' label_ name_ val_ =
                    True
                    {-# LINE 2694 "AttributeGrammar.hs" #-}
                    )
+              _lhsOlvGen =
+                  ({-# LINE 419 "AttributeGrammar.ag" #-}
+                   M.empty
+                   {-# LINE 2699 "AttributeGrammar.hs" #-}
+                   )
               _lhsOlvKill =
                   ({-# LINE 418 "AttributeGrammar.ag" #-}
                    M.empty
-                   {-# LINE 2699 "AttributeGrammar.hs" #-}
+                   {-# LINE 2704 "AttributeGrammar.hs" #-}
                    )
               _self =
                   BAssign' label_ name_ _valIself
               _lhsOself =
                   _self
-              _lhsOlvGen =
-                  ({-# LINE 419 "AttributeGrammar.ag" #-}
-                   error "missing rule: Stat'.BAssign'.lhs.lvGen"
-                   {-# LINE 2708 "AttributeGrammar.hs" #-}
-                   )
               ( _valIfreeVars,_valIprecedence,_valIpretty,_valIself) =
                   val_
           in  ( _lhsOfinal,_lhsOflow,_lhsOinit,_lhsOinterflow,_lhsOisSingle,_lhsOisSkip,_lhsOlabelBlockMapCollect,_lhsOlvGen,_lhsOlvKill,_lhsOpretty,_lhsOself,_lhsOvars)))
@@ -2841,9 +2841,9 @@ sem_Stat'_Malloc' label_ name_ size_ =
               _lhsOpretty :: ( [String] )
               _lhsOisSkip :: Bool
               _lhsOisSingle :: Bool
+              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOlvKill :: (M.Map Int (S.Set String))
               _lhsOself :: Stat'
-              _lhsOlvGen :: (M.Map Int (S.Set String))
               _sizeIfreeVars :: (S.Set String)
               _sizeIprecedence :: Int
               _sizeIpretty :: String
@@ -2893,20 +2893,20 @@ sem_Stat'_Malloc' label_ name_ size_ =
                    True
                    {-# LINE 2895 "AttributeGrammar.hs" #-}
                    )
+              _lhsOlvGen =
+                  ({-# LINE 419 "AttributeGrammar.ag" #-}
+                   M.empty
+                   {-# LINE 2900 "AttributeGrammar.hs" #-}
+                   )
               _lhsOlvKill =
                   ({-# LINE 418 "AttributeGrammar.ag" #-}
                    M.empty
-                   {-# LINE 2900 "AttributeGrammar.hs" #-}
+                   {-# LINE 2905 "AttributeGrammar.hs" #-}
                    )
               _self =
                   Malloc' label_ name_ _sizeIself
               _lhsOself =
                   _self
-              _lhsOlvGen =
-                  ({-# LINE 419 "AttributeGrammar.ag" #-}
-                   error "missing rule: Stat'.Malloc'.lhs.lvGen"
-                   {-# LINE 2909 "AttributeGrammar.hs" #-}
-                   )
               ( _sizeIfreeVars,_sizeIprecedence,_sizeIpretty,_sizeIself) =
                   size_
           in  ( _lhsOfinal,_lhsOflow,_lhsOinit,_lhsOinterflow,_lhsOisSingle,_lhsOisSkip,_lhsOlabelBlockMapCollect,_lhsOlvGen,_lhsOlvKill,_lhsOpretty,_lhsOself,_lhsOvars)))
@@ -2924,9 +2924,9 @@ sem_Stat'_Free' label_ ptr_ =
               _lhsOpretty :: ( [String] )
               _lhsOisSkip :: Bool
               _lhsOisSingle :: Bool
+              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOlvKill :: (M.Map Int (S.Set String))
               _lhsOself :: Stat'
-              _lhsOlvGen :: (M.Map Int (S.Set String))
               _ptrIfreeVars :: (S.Set String)
               _ptrIprecedence :: Int
               _ptrIpretty :: String
@@ -2976,20 +2976,20 @@ sem_Stat'_Free' label_ ptr_ =
                    True
                    {-# LINE 2978 "AttributeGrammar.hs" #-}
                    )
+              _lhsOlvGen =
+                  ({-# LINE 419 "AttributeGrammar.ag" #-}
+                   M.empty
+                   {-# LINE 2983 "AttributeGrammar.hs" #-}
+                   )
               _lhsOlvKill =
                   ({-# LINE 418 "AttributeGrammar.ag" #-}
                    M.empty
-                   {-# LINE 2983 "AttributeGrammar.hs" #-}
+                   {-# LINE 2988 "AttributeGrammar.hs" #-}
                    )
               _self =
                   Free' label_ _ptrIself
               _lhsOself =
                   _self
-              _lhsOlvGen =
-                  ({-# LINE 419 "AttributeGrammar.ag" #-}
-                   error "missing rule: Stat'.Free'.lhs.lvGen"
-                   {-# LINE 2992 "AttributeGrammar.hs" #-}
-                   )
               ( _ptrIfreeVars,_ptrIprecedence,_ptrIpretty,_ptrIself) =
                   ptr_
           in  ( _lhsOfinal,_lhsOflow,_lhsOinit,_lhsOinterflow,_lhsOisSingle,_lhsOisSkip,_lhsOlabelBlockMapCollect,_lhsOlvGen,_lhsOlvKill,_lhsOpretty,_lhsOself,_lhsOvars)))
@@ -3008,9 +3008,9 @@ sem_Stat'_RefAssign' label_ ptr_ val_ =
               _lhsOpretty :: ( [String] )
               _lhsOisSkip :: Bool
               _lhsOisSingle :: Bool
+              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOlvKill :: (M.Map Int (S.Set String))
               _lhsOself :: Stat'
-              _lhsOlvGen :: (M.Map Int (S.Set String))
               _ptrIfreeVars :: (S.Set String)
               _ptrIprecedence :: Int
               _ptrIpretty :: String
@@ -3064,20 +3064,20 @@ sem_Stat'_RefAssign' label_ ptr_ val_ =
                    True
                    {-# LINE 3066 "AttributeGrammar.hs" #-}
                    )
+              _lhsOlvGen =
+                  ({-# LINE 419 "AttributeGrammar.ag" #-}
+                   M.empty
+                   {-# LINE 3071 "AttributeGrammar.hs" #-}
+                   )
               _lhsOlvKill =
                   ({-# LINE 418 "AttributeGrammar.ag" #-}
                    M.empty
-                   {-# LINE 3071 "AttributeGrammar.hs" #-}
+                   {-# LINE 3076 "AttributeGrammar.hs" #-}
                    )
               _self =
                   RefAssign' label_ _ptrIself _valIself
               _lhsOself =
                   _self
-              _lhsOlvGen =
-                  ({-# LINE 419 "AttributeGrammar.ag" #-}
-                   error "missing rule: Stat'.RefAssign'.lhs.lvGen"
-                   {-# LINE 3080 "AttributeGrammar.hs" #-}
-                   )
               ( _ptrIfreeVars,_ptrIprecedence,_ptrIpretty,_ptrIself) =
                   ptr_
               ( _valIfreeVars,_valIprecedence,_valIpretty,_valIself) =
@@ -3096,9 +3096,9 @@ sem_Stat'_Continue' label_ =
               _lhsOpretty :: ( [String] )
               _lhsOisSkip :: Bool
               _lhsOisSingle :: Bool
+              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOlvKill :: (M.Map Int (S.Set String))
               _lhsOself :: Stat'
-              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOinit =
                   ({-# LINE 147 "AttributeGrammar.ag" #-}
                    label_
@@ -3144,20 +3144,20 @@ sem_Stat'_Continue' label_ =
                    True
                    {-# LINE 3146 "AttributeGrammar.hs" #-}
                    )
+              _lhsOlvGen =
+                  ({-# LINE 419 "AttributeGrammar.ag" #-}
+                   M.empty
+                   {-# LINE 3151 "AttributeGrammar.hs" #-}
+                   )
               _lhsOlvKill =
                   ({-# LINE 418 "AttributeGrammar.ag" #-}
                    M.empty
-                   {-# LINE 3151 "AttributeGrammar.hs" #-}
+                   {-# LINE 3156 "AttributeGrammar.hs" #-}
                    )
               _self =
                   Continue' label_
               _lhsOself =
                   _self
-              _lhsOlvGen =
-                  ({-# LINE 419 "AttributeGrammar.ag" #-}
-                   error "missing rule: Stat'.Continue'.lhs.lvGen"
-                   {-# LINE 3160 "AttributeGrammar.hs" #-}
-                   )
           in  ( _lhsOfinal,_lhsOflow,_lhsOinit,_lhsOinterflow,_lhsOisSingle,_lhsOisSkip,_lhsOlabelBlockMapCollect,_lhsOlvGen,_lhsOlvKill,_lhsOpretty,_lhsOself,_lhsOvars)))
 sem_Stat'_Break' :: Int ->
                     (T_Stat')
@@ -3172,9 +3172,9 @@ sem_Stat'_Break' label_ =
               _lhsOpretty :: ( [String] )
               _lhsOisSkip :: Bool
               _lhsOisSingle :: Bool
+              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOlvKill :: (M.Map Int (S.Set String))
               _lhsOself :: Stat'
-              _lhsOlvGen :: (M.Map Int (S.Set String))
               _lhsOinit =
                   ({-# LINE 150 "AttributeGrammar.ag" #-}
                    label_
@@ -3220,18 +3220,18 @@ sem_Stat'_Break' label_ =
                    True
                    {-# LINE 3222 "AttributeGrammar.hs" #-}
                    )
+              _lhsOlvGen =
+                  ({-# LINE 419 "AttributeGrammar.ag" #-}
+                   M.empty
+                   {-# LINE 3227 "AttributeGrammar.hs" #-}
+                   )
               _lhsOlvKill =
                   ({-# LINE 418 "AttributeGrammar.ag" #-}
                    M.empty
-                   {-# LINE 3227 "AttributeGrammar.hs" #-}
+                   {-# LINE 3232 "AttributeGrammar.hs" #-}
                    )
               _self =
                   Break' label_
               _lhsOself =
                   _self
-              _lhsOlvGen =
-                  ({-# LINE 419 "AttributeGrammar.ag" #-}
-                   error "missing rule: Stat'.Break'.lhs.lvGen"
-                   {-# LINE 3236 "AttributeGrammar.hs" #-}
-                   )
           in  ( _lhsOfinal,_lhsOflow,_lhsOinit,_lhsOinterflow,_lhsOisSingle,_lhsOisSkip,_lhsOlabelBlockMapCollect,_lhsOlvGen,_lhsOlvKill,_lhsOpretty,_lhsOself,_lhsOvars)))
