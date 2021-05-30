@@ -26,9 +26,9 @@ instance {-# OVERLAPPING #-} Ord (M.Map String Ztb) where
                             (y:ys) -> if x > y then GT 
                                                else compare (M.fromList xs) (M.fromList ys) 
 
-constantPropagationAnalysis :: [Flow] -> Int -> [String] -> M.Map Int Block -> M.Map Int String -> [(M.Map String Ztb, M.Map String Ztb)]
-constantPropagationAnalysis fs i vs ibmap lpmap = maximalFixedPoint (MkLattice join (bottom vs))  
-                                                  (MkFlow Forward fs) [i] (bottom vs) (lambdaF ibmap lpmap)
+constantPropagationAnalysis :: [Flow] -> IF -> Int -> Int -> [String] -> M.Map Int Block -> M.Map Int String -> [(M.Map String Ztb, M.Map String Ztb)]
+constantPropagationAnalysis fs interf k i vs ibmap lpmap = maximalFixedPoint (MkLattice join (bottom vs))  
+                                                           (MkFlow Forward fs) interf k [i] (bottom vs) (lambdaF ibmap lpmap)
 
 bottom :: [String] -> M.Map String Ztb
 bottom vs = M.fromList (zip vs (replicate (length vs) Bottom))
