@@ -14,3 +14,4 @@ module PrettyPrinter where
     printFlow :: Flow -> String 
     printFlow (Intra (n,x)) = "(" ++ show n ++ "," ++ show x ++ ")"
     printFlow (Inter (n,x)) = "(" ++ show n ++ ";" ++ show x ++ ")"
+    printFlow (Over  (n,x)) = "(" ++ show n ++ "-" ++ show x ++ ")"

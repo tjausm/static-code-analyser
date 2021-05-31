@@ -6,6 +6,7 @@ import MFP
 import AttributeGrammar
 import qualified Data.Map as M
 import qualified Data.Set as S
+import Data.Maybe 
 
 data Ztb = Int Int | Top | Bottom deriving (Eq, Show) 
 
@@ -26,9 +27,9 @@ instance {-# OVERLAPPING #-} Ord (M.Map String Ztb) where
                             (y:ys) -> if x > y then GT 
                                                else compare (M.fromList xs) (M.fromList ys) 
 
-constantPropagationAnalysis :: [Flow] -> IF -> Int -> Int -> [String] -> M.Map Int Block -> M.Map Int String -> [(M.Map String Ztb, M.Map String Ztb)]
-constantPropagationAnalysis fs interf k i vs ibmap lpmap = maximalFixedPoint (MkLattice join (bottom vs))  
-                                                           (MkFlow Forward fs) interf k [i] (bottom vs) (lambdaF ibmap lpmap)
+constantPropagationAnalysis :: [Flow] -> IF -> Int -> Int -> [String] -> M.Map Int Block -> M.Map Int String -> M.Map String ([String], String) -> [(M.Map String Ztb, M.Map String Ztb)]
+constantPropagationAnalysis fs interf k i vs ibmap lpmap params = maximalFixedPoint (MkLattice join (bottom vs)) (MkFlow Forward fs) 
+                                                                  interf k [i] (bottom vs) (lambdaF ibmap lpmap params)
 
 bottom :: [String] -> M.Map String Ztb
 bottom vs = M.fromList (zip vs (replicate (length vs) Bottom))
@@ -42,14 +43,16 @@ elementJoin Bottom  x                = x
 elementJoin x       Bottom           = x
 elementJoin _       _                = Top 
 
-lambdaF :: M.Map Int Block -> M.Map Int String -> Int -> M.Map String Ztb -> M.Map String Ztb
-lambdaF ib lp i m = transferFromBlock (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) m
+lambdaF :: M.Map Int Block -> M.Map Int String -> M.Map String ([String], String) -> Int -> M.Map String Ztb -> M.Map String Ztb
+lambdaF ib lp params i m = transferFromBlock (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) m params 
 
 -- String is the enclosing procedure name (empty if none) for the prefix of variables within procedures. 
-transferFromBlock :: Block -> String -> M.Map String Ztb -> M.Map String Ztb
-transferFromBlock (S (IAssign' l n v))     p m = M.insert (p ++ n) (analyseExpression v m) m 
-transferFromBlock (S (Call' lc lr n ps o)) p m = m                    
-transferFromBlock _                        p m = m
+transferFromBlock :: Block -> String -> M.Map String Ztb -> M.Map String ([String], String) -> M.Map String Ztb
+transferFromBlock (S (IAssign' l n v))     p m params = M.insert (p ++ n) (analyseExpression v m) m 
+transferFromBlock (S (Call' lc lr n ps o)) p m params = let (ins, out) = fromJust $ params M.!? n in 
+                                                        M.insert out Bottom $
+                                                        foldr (\(x,y) -> M.insert (n ++ x) y) m (zip ins (map (\(I x) -> analyseExpression x m) ps))                      
+transferFromBlock _                        p m params = m
 
 analyseExpression :: IExpr -> M.Map String Ztb -> Ztb
 analyseExpression (IConst i)   m = Int i

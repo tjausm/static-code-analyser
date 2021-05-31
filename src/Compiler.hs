@@ -40,15 +40,16 @@ compile source = do
   let vars = vars_Syn_Program' synProgram'
   let interflow = interflow_Syn_Program' synProgram'
   let ibmap = labelBlockMapCollect_Syn_Program' synProgram'
+  let params = procInOutCollect_Syn_Program' synProgram'
   let bottom = S.fromList $ vars_Syn_Program' synProgram'
   let lambdaF = lvLambda_Syn_Program' synProgram'
   let jotta = MkSet S.empty 
   let lpmap = labelProcMapCollect_Syn_Program' synProgram'
 
-  let lvResult = maximalFixedPoint (lvL jotta) (lvF flow) interflow k e jotta lambdaF 
-  putStrLn $ showMFP (show . (\(MkSet x) -> x)) lvResult
+ -- let lvResult = maximalFixedPoint (lvL jotta) (lvF flow) interflow k e jotta lambdaF 
+ -- putStrLn $ showMFP (show . (\(MkSet x) -> x)) lvResult
 
   putStrLn "\n Constant Propagation"
-  let testcp = constantPropagationAnalysis flow interflow k i vars ibmap lpmap
+  let testcp = constantPropagationAnalysis flow interflow k i vars ibmap lpmap params
   putStrLn $ showMFP (\x -> show (M.toList x)) testcp
 

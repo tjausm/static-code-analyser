@@ -8,7 +8,7 @@ import Debug.Trace
 type Delta = [Int] 
 
 data L a =  MkLattice (a -> a -> a) (Bottom a) -- Lattice Join
-type EmbellishedL a = M.Map Delta [a] -- Not sure about the list yet.  
+type EmbellishedL a = M.Map Delta [a]   
 data F = MkFlow FlowDir [Flow]
 type IF = [(Int, Int, Int, Int)]
 type E = [Int] -- extremal labels
@@ -24,44 +24,64 @@ maximalFixedPoint :: Show a => Ord a => L a -> F -> IF -> Int -> E -> J a -> Lam
 maximalFixedPoint lattice@(MkLattice _ bottom)  flow@(MkFlow _ w) interf k e j lambF  =
     -- Step 1
     let labels = genLabels w
-        analysis = map (\label -> if  label `elem` e then j else bottom) labels -- labels set extremal labels to jota
+        analysis = M.singleton [] (map (\label -> if  label `elem` e then j else bottom) labels)                       -- set extremal labels to jota, all other labels to bottom.
     -- Step 2
     in  step3 lambF flow $
         step2 lattice flow interf k w [] lambF analysis
 
-step2 :: Show a => Ord a => L a -> F -> IF -> Int -> [Flow] -> Delta -> LambdaF a -> [a] -> [a]
-step2 _ _ _ _ [] _ _ analysis = analysis                                                                -- if W == Nil return analysis
+step2 :: Show a => Ord a => L a -> F -> IF -> Int -> [Flow] -> Delta -> LambdaF a -> EmbellishedL a -> [a]
+step2 _ _ _ _ [] _ _ analysis = analysis M.! []                                                                        -- if W == Nil return analysis
 step2 lattice@(MkLattice join bottom) flow@(MkFlow dir f) interf k (w:ws) delta lambF analysis  =
-    let l = if dir == Forward then fstLabel w else sndLabel w                                         -- lower 1 index because haskell lists start at 0
+    let l = if dir == Forward then fstLabel w else sndLabel w                                                          -- lower 1 index because haskell lists start at 0
         l' = if dir == Forward then sndLabel w  else fstLabel w
-        fl = lambF l                                                                                  -- get lambda function for label l 
-        analysis' = replacel l' (analysis!!(l'-1) `join` fl (analysis!!(l-1))) analysis               -- update l'
-        w' = if dir == Forward then filter ((l' ==) . fstLabel) f else filter ((l' ==) . sndLabel) f  -- get all flow tupples of the form (l', _) from the flow
+        fl = lambF l                                                                                                   -- get lambda function for label l 
+        flclean = lambF l -- Add throwing away of local variables. 
+        analysis' = replacelE delta l' ((analysis M.! delta)!!(l'-1) `join` fl ((analysis M.! delta)!!(l-1))) analysis -- update l'
+        w' = if dir == Forward then filter ((l' ==) . fstLabel) f else filter ((l' ==) . sndLabel) f                   -- get all flow tuples of the form (l', _) from the flow
         calls = foldr (\x y -> [(getFst x)] ++ y ) [] interf
         returns = foldr (\x y -> [(getThird x)] ++ y ) [] interf
 
-        normal = if fl (analysis!!(l-1)) > analysis!!(l'-1)                     -- check if transfer function over l > l'
-                    then step2 lattice flow interf k (w' ++ ws) delta lambF analysis'   -- recurse with updated analysis (maybe we can just recurse anyhow with updated value?)
-                    else step2 lattice flow interf k ws delta lambF analysis            -- recurse without updated analysis
+        normal = if logStep analysis (w:ws) w' l l' calls returns delta fl $                                              -- Uncomment to trace algorithm 
+                    fl ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)                                    -- check if transfer function over l > l'
+                    then step2 lattice flow interf k (w' ++ ws) delta lambF analysis'                                  -- recurse with updated analysis 
+                    else step2 lattice flow interf k ws delta lambF analysis                                           -- recurse without updated analysis
 
-        analysisc = replacel l' (multiJoin (map (\x -> analysis!!(x-1)) (getCallLabels interf l')) join bottom) analysis  -- fl moet hier nog in verwerkt worden + in deze call hieronder. 
+        analysisc = replacelE delta' l' (multiJoin (map (\x -> (fl ((analysis M.! delta)!!(x-1)))) (getCallLabels interf l')) join bottom) initanalysis   -- fl is applied to original delta value, result is stored in the updated value. 
+        analysisr = replacelE delta l' (join (flclean ((initanalysis M.! delta')!!(labelendproc))) (fl ((analysis M.! delta)!!(l-1)))) analysis 
 
         delta' = updateDelta delta l k
-        deltar = updateDelta delta (-1) k 
-    in
-        if elem l calls 
-            then if fl (multiJoin (map (\x -> analysis!!(x-1)) (getCallLabels interf l')) join bottom) > analysis!!(l'-1)        --join anlysis over all entry options.     -- context switch --> update delta value
-                    then step2 lattice flow interf k (w' ++ ws) delta' lambF analysisc                               -- still need to get the correct analysis via delta. 
-                    else step2 lattice flow interf k ws delta' lambF analysis        
-            else if elem l returns  -- or do we need to check l' is returnlabel instead of l is exit label?
-                then if fl (analysis!!(l-1)) > analysis!!(l'-1)                             -- another context switch --> update delta value
-                    then step2 lattice flow interf k (w' ++ ws) deltar lambF analysis'   
+        labelendproc = getEndProc l interf
+
+        initanalysis = case M.member delta' analysis of
+                       False -> M.insert delta' (analysis M.! delta) analysis
+                       True -> analysis
+    in case w of 
+        (Intra (a,b)) -> normal
+        (Inter (a,b)) -> if elem l calls                                                                                                                                   -- for forward analysis, roles of calls and returns are reversed for backward. 
+                            then if logStep initanalysis (w:ws) w' l l' calls returns delta' fl $                                                                                  -- Uncomment to trace algorithm
+                                    multiJoin (map (\x -> (fl ((analysis M.! delta)!!(x-1)))) (getCallLabels interf l')) join bottom > (initanalysis M.! delta')!!(l'-1)  -- join anlysis over all entry options, transfer function is applied on original delta.
+                                                                                                                                                          -- joined value is stored in delta'.   
+                                then step2 lattice flow interf k (w' ++ ws) delta' lambF analysisc                                                                    -- continue normally inside the procedure.  
+                                else step2 lattice flow interf k ws         delta' lambF initanalysis                                                                         -- continue normally without updating w.
+                            else step2 lattice flow interf k ws delta lambF analysis                            
+        (Over  (a,b)) -> if logStep analysis (w:ws) w' l l' calls returns delta fl $
+                            join (flclean ((initanalysis M.! delta')!!(labelendproc))) (fl ((analysis M.! delta)!!(l-1))) > (analysis M.! delta)!!(l'-1)
+                            then step2 lattice flow interf k (w' ++ ws) delta lambF analysisr   
+                            else step2 lattice flow interf k ws delta lambF analysis 
+       {- if elem l calls                                                                                                                                   -- for forward analysis, roles of calls and returns are reversed for backward. 
+            then if logStep initanalysis (w:ws) w' l l' calls returns delta' fl $                                                                                  -- Uncomment to trace algorithm
+                    multiJoin (map (\x -> (fl ((analysis M.! (trace ("Delta at  line 62 " ++ show delta) delta))!!(x-1)))) (getCallLabels interf l')) join bottom > (initanalysis M.! (trace "delta' at line 62 " delta'))!!(l'-1)  -- join anlysis over all entry options, transfer function is applied on original delta.
+                                                                                                                                                          -- joined value is stored in delta'.   
+                    then step2 lattice flow interf k (w' ++ ws) (trace "delta' at line 64 " delta') lambF analysisc                                                                    -- continue normally inside the procedure.  
+                    else step2 lattice flow interf k ws (trace "delta' at line 65 " delta') lambF initanalysis                                                                         -- continue normally without updating w. 
+            else if elem l returns               -- or do we need to check l' is returnlabel instead of l is exit label?
+                then if logStep analysis (w:ws) w' l l' calls returns delta fl $                                                                              -- Uncomment to trace algorithm
+                        join (flclean ((analysis M.! delta)!!(l-1))) (fl ((analysis M.! deltar)!!labelcall)) > (analysis M.! deltar)!!(l'-1)              -- join values from before function call with global updates from function. 
+                    then step2 lattice flow interf k (w' ++ ws) deltar lambF analysisr   
                     else step2 lattice flow interf k ws deltar lambF analysis       
-                else normal                                                                 -- normal continuation 
-        --if  logStep analysis (w:ws) w' l l' calls returns fl $                 -- Uncomment to trace algorithm
-        --    fl (analysis!!(l-1)) > analysis!!(l'-1)                    -- check if transfer function over l > l'
-        --then step2 lattice flow interf (w' ++ ws) lambF analysis'      -- recurse with updated analysis (maybe we can just recurse anyhow with updated value?)
-        --else step2 lattice flow interf ws lambF analysis               -- recurse without updated analysis
+            else normal -}                                                                                                                                  -- normal continuation 
+        --if  logStep analysis (w:ws) w' l l' calls returns fl $         -- Uncomment to trace algorithm
+
 
 -- return result as tuples of (entry,exit) value
 step3 :: LambdaF a -> F -> [a] -> [(a,a)]
@@ -70,21 +90,22 @@ step3 lambF (MkFlow dir f) analysis = if dir == Forward then zip analysis analys
         analysis' = zipWith (\ f a -> f a) fl analysis
         fl = [lambF i | i <- [1 .. (length analysis)]]
 
-updateDelta :: Delta -> Int -> Int -> Delta
-updateDelta d (-1) _ = tail d 
-updateDelta d l  k = l : take k d
+-- May give error for taking tail of empty list if wrong delta values are used.
+updateDelta :: Delta -> Int -> Int -> Delta 
+updateDelta d  l    k = l : take k d
 
 multiJoin :: [a] -> (a -> a -> a) -> a -> a
 multiJoin as join bottom = foldr join bottom as
 
-logStep :: (Show a1, Ord a1) => [a1] -> [Flow] -> [Flow] -> Int -> Int -> [Int] -> [Int] -> (a1 -> a1) -> a2 -> a2
-logStep analysis (w:ws) w' l l' calls returns fl = trace ("\n\nanalysis = " ++ show analysis)
+logStep :: (Show a1, Ord a1) => M.Map [Int] [a1] -> [Flow] -> [Flow] -> Int -> Int -> [Int] -> [Int] -> Delta -> (a1 -> a1) -> a2 -> a2
+logStep analysis (w:ws) w' l l' calls returns delta fl = trace ("\n\nanalysis = " ++ M.foldrWithKey (\k a s -> "\n Key: " ++ show k ++ " Value: " ++ show a ++ s ) [] analysis)
             trace ("step2: (w:ws) = " ++ unwords (map show (w:ws)))
             trace ("step2: w' = " ++ unlines (map show w'))
             trace ("step2: l = " ++ show l  ++ ", l' = " ++ show l' )
             trace ("step2: calls = " ++ show calls )
             trace ("step2: returns = " ++ show returns )
-            trace ("step2: if " ++  show (fl (analysis!!(l-1))) ++ ">" ++ show (analysis!!(l'-1)) ++ " = " ++ show (fl (analysis!!(l-1)) > analysis!!(l'-1)))
+            trace ("step2: delta = " ++ show delta)
+           -- trace ("step2: if " ++  show (fl (analysis!!(l-1))) ++ ">" ++ show (analysis!!(l'-1)) ++ " = " ++ show (fl (analysis!!(l-1)) > analysis!!(l'-1)))
 
 -- Replaces l'th element in a list
 replacel :: Int -> a -> [a] -> [a]
@@ -93,16 +114,24 @@ replacel l l' w = lhs ++ [l'] ++ rhs
         lhs = take (l - 1) w
         rhs = drop l w
 
+-- Replace the l'th element in the list corresponding to delta
+replacelE :: Delta -> Int -> a -> EmbellishedL a -> EmbellishedL a
+replacelE d l l' analysis = let new = replacel l l' (analysis M.! d) in M.insert d new analysis 
+
+
 -- Functions to easily process Flow type
 instance Show Flow where
     show (Inter (a,b)) = show "( " ++ show a ++ show  ";" ++ show b ++ show ")"
     show (Intra (a,b)) = show "( " ++ show a ++ show  "," ++ show b ++ show ")"
+    show (Over  (a,b)) = show "( " ++ show a ++ show  "-" ++ show b ++ show ")"
 fstLabel :: Flow -> Int
 fstLabel (Intra f) = fst f
 fstLabel (Inter f) = fst f
+fstLabel (Over  f) = fst f
 sndLabel :: Flow -> Int
 sndLabel (Inter f) = snd f
 sndLabel (Intra f) = snd f
+sndLabel (Over  f) = snd f
 getFlow :: F -> [Flow]
 getFlow (MkFlow _ f) = f
 getDir :: F -> FlowDir
@@ -120,6 +149,11 @@ getCallLabels []     _ = []
 getCallLabels (i:is) l = case getSnd i of
                          l -> getFst i : getCallLabels is l 
                          _ -> getCallLabels is l
+
+getEndProc :: Int -> [(Int, Int, Int, Int)] -> Int
+getEndProc l (i:is) = case getFst i of
+                      l -> getThird i
+                      _ -> getEndProc l is
 
 -- Gets highest label m in the flow list and gens a list [1..m] 
 genLabels :: [Flow] -> [Int]

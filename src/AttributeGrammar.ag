@@ -94,6 +94,7 @@ type Exprs = [Expr]
 
 data Flow | Intra labels :: {(Int, Int)}
           | Inter labels :: {(Int, Int)}
+          | Over  labels :: {(Int, Int)}
 
 data Block | E expr :: Expr
            | S stat :: Stat'
@@ -225,7 +226,7 @@ sem Stat'
     lhs.flow = Intra (@labelc, @stat.init) : map (\x -> Intra (x, @labelc)) @stat.final ++ @stat.flow        
   
   | Call'
-    lhs.flow = (\(x, y) -> Inter (@labelCall, x) : [Inter (y, @labelExit)]) (@lhs.procMapPassDown M.! @name)
+    lhs.flow = Over (@labelCall, @labelExit) : (\(x, y) -> Inter (@labelCall, x) : [Inter (y, @labelExit)]) (@lhs.procMapPassDown M.! @name)
     -- Using (!) returns an error if the key is not in the map, but that should not happen.        
   
   | IAssign'
@@ -307,6 +308,24 @@ sem Stat'
 
   | Break'
     lhs.interflow = []
+
+-- map procedureName to input and output parameters 
+
+attr Program' Procs' Proc' [ | | procInOutCollect :: { M.Map String ([String], String) } ]
+
+sem Program'
+  | Program'
+    lhs.procInOutCollect = @procs.procInOutCollect
+
+sem Proc'
+  | Proc'
+    lhs.procInOutCollect = M.singleton @name (@inp, @out)
+
+sem Procs'
+  | Nil
+    lhs.procInOutCollect = M.empty
+  | Cons
+    lhs.procInOutCollect = M.union @hd.procInOutCollect @tl.procInOutCollect
 
 -- map procedureName to entry and exit label. 
 
