@@ -1,10 +1,14 @@
 begin
-    proc deadProc(val x1, res y1) is
-        y1 := 99;
-    end
-    proc liveProc(val x2, res y2) is
-        y2 := 100;
-    end
-    call liveProc(3, y);
-    x := y + 2;
+    x := 2;
+    while y > x do {
+        x := y + 1;
+        g := z + 4;
+    }
+    x := 4;
+    g := 2;
+    if y > x then
+        z := y;
+    else
+        z := y * g;
+    x := z;
 end
