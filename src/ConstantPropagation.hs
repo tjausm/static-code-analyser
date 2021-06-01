@@ -8,6 +8,7 @@ import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.Maybe 
 import Data.List
+import Debug.Trace
 
 data Ztb = Int Int | Top | Bottom deriving (Eq, Show) 
 
@@ -33,11 +34,11 @@ constantPropagationAnalysis :: [Flow] -> IF -> Int -> Int -> [String] -> M.Map I
 constantPropagationAnalysis fs interf k i vs ibmap lpmap params = maximalFixedPoint (MkLattice join combine (bottom vs)) (MkFlow Forward fs) 
                                                                   interf k [i] (top vs) (lambdaF ibmap lpmap params)
 
-top :: [String] -> M.Map String Ztb
-top vs = M.fromList (zip vs (replicate (length vs) Top))
-
 bottom :: [String] -> M.Map String Ztb
 bottom vs = M.fromList (zip vs (replicate (length vs) Bottom))
+
+top :: [String] -> M.Map String Ztb
+top vs = M.fromList (zip vs (replicate (length vs) Top))
 
 join :: M.Map String Ztb -> M.Map String Ztb -> M.Map String Ztb
 join = M.unionWith elementJoin
@@ -60,7 +61,9 @@ hasBottom []          = False
 hasBottom ((x1, x2):xs) = (x2 == Bottom) || hasBottom xs  
 
 lambdaF :: M.Map Int Block -> M.Map Int String -> M.Map String ([String], String) -> Int -> Int -> Bool -> M.Map String Ztb -> M.Map String Ztb
-lambdaF ib lp params i end True  m = M.filterWithKey (\k a -> not (isPrefixOf (M.findWithDefault "" end lp) k)) $ (transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) True m params)
+lambdaF ib lp params i end True  m = M.filterWithKey (\k a -> not (isPrefixOf (M.findWithDefault "" end lp) k)) $ trace ("CPlambda: " ++ show (transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" end lp) True m params) ++ " m: " ++ show m ) 
+                                                                                                                    (transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) True m params)
+
 lambdaF ib lp params i end False m = transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) False m params  
 
 transferFromBlock' :: Block -> String -> Bool -> M.Map String Ztb -> M.Map String ([String], String) -> M.Map String Ztb
@@ -75,9 +78,9 @@ transferFromBlock (S (IAssign' l n v))     p b m params = if M.member n m
                                                              else M.insert (p ++ n) (analyseExpression p v m) m 
 transferFromBlock (S (Call' lc lr n ps o)) p b m params = let (ins, out) = fromJust $ params M.!? n in
                                                             if b  
-                                                                then M.insert o (M.findWithDefault (Int 5) (n ++ out) m) m
+                                                                then trace "waarom komen we hier niet? " M.insert o (M.findWithDefault (Int 5) (n ++ out) m) m
                                                                 else M.insert (n ++ out) Top $
-                                                                    foldr (\(x,y) -> M.insert (n ++ x) y) m (zip ins (map (\(I x) -> analyseExpression p x m) ps))                                            
+                                                                foldr (\(x,y) -> M.insert (n ++ x) y) m (zip ins (map (\(I x) -> analyseExpression p x m) ps))                      
 transferFromBlock _                        p b m params = m
 
 -- String is enclosing procedure for prefixes of variables. 
@@ -86,10 +89,8 @@ analyseExpression p (IConst i)   m = Int i
 analyseExpression p (Var x)      m = case M.lookup (p ++ x) m of 
                                      Nothing     -> case M.lookup x m of 
                                                     Nothing     -> Top
-                                                    Just Bottom -> Top
                                                     Just y      -> y
-                                     Just Bottom -> Top 
-                                     Just y      -> y
+                                     Just y      -> trace ("p: " ++ show p) y
 analyseExpression p (Plus   l r) m = plus   (analyseExpression p l m) (analyseExpression p r m)
 analyseExpression p (Minus  l r) m = minus  (analyseExpression p l m) (analyseExpression p r m)
 analyseExpression p (Times  l r) m = times  (analyseExpression p l m) (analyseExpression p r m)
@@ -115,3 +116,7 @@ divide (Int a) (Int 0) = Top
 divide (Int a) (Int b) = Int (a `div` b)
 divide Bottom  Bottom  = Bottom
 divide _       _       = Top
+
+showBlock :: Block -> String
+showBlock (S (Call' lc lr n ps o)) = "Call: " ++ show lc ++ show lr ++ show n ++ show ps ++ show o
+showBlock _                        = "No call block"
