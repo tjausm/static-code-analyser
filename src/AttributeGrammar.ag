@@ -322,8 +322,8 @@ sem Stat'
 -- LV analysis
 {
 data LVSet = MkSet (S.Set String)
-genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> Bool -> (LVSet -> LVSet)
-genLambda lvGen lvKill l b = setToLVSet . (S.union $ recklessLookup l lvGen) . (flip S.difference $ recklessLookup l lvKill) . lvSetToSet
+genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> Int ->  Bool -> (LVSet -> LVSet)
+genLambda lvGen lvKill l end b = setToLVSet . (S.union $ recklessLookup l lvGen) . (flip S.difference $ recklessLookup l lvKill) . lvSetToSet
   where
     recklessLookup k m = case M.lookup k m of
       Nothing -> S.empty
@@ -332,7 +332,7 @@ genLambda lvGen lvKill l b = setToLVSet . (S.union $ recklessLookup l lvGen) . (
     setToLVSet x = MkSet x
 }
 
-attr Program'       [ | | lvLambda :: { Int -> Bool -> (LVSet-> LVSet) } ]
+attr Program'       [ | | lvLambda :: { Int -> Int -> Bool -> (LVSet-> LVSet) } ]
 attr Stat' Program' [ | | lvKill use {M.union} {M.empty} :: {M.Map Int (S.Set String)}]
 attr Stat' Program' [ | | lvGen use {M.union} {M.empty} ::  {M.Map Int (S.Set String)}]
 attr IExpr BExpr    [ | | freeVars use {S.union} {S.empty} :: {S.Set String}]

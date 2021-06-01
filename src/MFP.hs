@@ -13,7 +13,7 @@ data F = MkFlow FlowDir [Flow]
 type IF = [(Int, Int, Int, Int)]
 type E = [Int] -- extremal labels
 type J a = a -- extremal value
-type LambdaF a = Int -> Bool -> a -> a -- mapping labels to transfer functions
+type LambdaF a = Int -> Int -> Bool -> a -> a -- mapping labels to transfer functions
 type K = Int
 type Bottom a = a
 data FlowDir = Backward | Forward deriving Eq-- flow direction 
@@ -34,8 +34,8 @@ step2 _ _ _ _ [] _ _ analysis = analysis                                        
 step2 lattice@(MkLattice join combine bottom) flow@(MkFlow dir f) interf k (w:ws) delta lambF analysis  =
     let l = if dir == Forward then fstLabel w else sndLabel w
         l' = if dir == Forward then sndLabel w  else fstLabel w
-        fl = lambF l False                                                                                             -- get lambda function for label l 
-        flclean = lambF l True                                                                                         -- Throw away local variables.  
+        fl = lambF l labelendproc False                                                                                             -- get lambda function for label l 
+        flclean = lambF l labelendproc True                                                                                         -- Throw away local variables.  
         analysis' = replacelE delta l' ((analysis M.! delta)!!(l'-1) `join` fl ((analysis M.! delta)!!(l-1))) analysis -- update l'
         w' = if dir == Forward then filter ((l' ==) . fstLabel) f else filter ((l' ==) . sndLabel) f                   -- get all flow tuples of the form (l', _) from the flow
         calls = map getFst interf
@@ -88,7 +88,7 @@ step3' :: LambdaF a -> F -> [a] -> [(a,a)]
 step3' lambF (MkFlow dir f) analysis = if dir == Forward then zip analysis analysis' else zip analysis' analysis
     where
         analysis' = zipWith (\ f a -> f a) fl analysis
-        fl = [lambF i False | i <- [1 .. (length analysis)]]
+        fl = [lambF i i False | i <- [1 .. (length analysis)]]
 
 --step3 :: LambdaF a -> F -> EmbellishedL a -> [[(a,a)]]
 --step3 lambF flow analysis = map (step3' lambF flow) $ map snd (M.toList analysis) 
