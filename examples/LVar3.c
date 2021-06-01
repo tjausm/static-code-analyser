@@ -1,10 +1,7 @@
 begin
-    x := 2;
-    y := 4;
-    x := 1;
-    if y > x then
-        z := y;
-    else
-        z := y * y;
-    x := z;
+    infFact := 0;
+    n := 1;
+    while infFact < 1 do {
+        n := n * (n + 1);   
+    }
 end
