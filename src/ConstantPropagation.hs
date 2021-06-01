@@ -30,8 +30,11 @@ instance {-# OVERLAPPING #-} Ord (M.Map String Ztb) where
                                                              else compare (M.fromList xs) (M.fromList ys) 
 
 constantPropagationAnalysis :: [Flow] -> IF -> Int -> Int -> [String] -> M.Map Int Block -> M.Map Int String -> M.Map String ([String], String) -> [(M.Map String Ztb, M.Map String Ztb)]
-constantPropagationAnalysis fs interf k i vs ibmap lpmap params = maximalFixedPoint (MkLattice join (bottom vs)) (MkFlow Forward fs) 
+constantPropagationAnalysis fs interf k i vs ibmap lpmap params = maximalFixedPoint (MkLattice join combine (top vs)) (MkFlow Forward fs) 
                                                                   interf k [i] (bottom vs) (lambdaF ibmap lpmap params)
+
+top :: [String] -> M.Map String Ztb
+top vs = M.fromList (zip vs (replicate (length vs) Top))
 
 bottom :: [String] -> M.Map String Ztb
 bottom vs = M.fromList (zip vs (replicate (length vs) Bottom))
@@ -45,6 +48,12 @@ elementJoin (Int x) (Int y) | x == y    = Int x
 elementJoin Bottom  x                = x
 elementJoin x       Bottom           = x
 elementJoin _       _                = Top 
+
+combine :: M.Map String Ztb -> M.Map String Ztb -> M.Map String Ztb
+combine = M.unionWith elementCombine
+
+elementCombine :: Ztb -> Ztb -> Ztb
+elementCombine a b = a
 
 lambdaF :: M.Map Int Block -> M.Map Int String -> M.Map String ([String], String) -> Int -> Bool -> M.Map String Ztb -> M.Map String Ztb
 lambdaF ib lp params i True  m = M.filterWithKey (\k a -> not (isPrefixOf (M.findWithDefault "" i lp) k)) $ (transferFromBlock (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) m params)
