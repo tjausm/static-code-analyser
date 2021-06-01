@@ -18,7 +18,7 @@ instance Show LVSet where
 
 -- Lattice
 lvL :: LVSet ->  L LVSet
-lvL = MkLattice join
+lvL = MkLattice join join
     where
         join (MkSet x) (MkSet y) = MkSet $ x `S.union` y
 

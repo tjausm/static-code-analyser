@@ -7,7 +7,7 @@ import Debug.Trace
 
 type Delta = [Int]
 
-data L a =  MkLattice (a -> a -> a) (Bottom a) -- Lattice Join
+data L a =  MkLattice (a -> a -> a) (a -> a -> a) (Bottom a) -- Lattice Join
 type EmbellishedL a = M.Map Delta [a]
 data F = MkFlow FlowDir [Flow]
 type IF = [(Int, Int, Int, Int)]
@@ -21,7 +21,7 @@ data FlowDir = Backward | Forward deriving Eq-- flow direction
 
 -- Should a have both Eq and Ord typeclass since it should be a partial order
 maximalFixedPoint :: Show a => Ord a => L a -> F -> IF -> Int -> E -> J a -> LambdaF a -> [(a,a)]
-maximalFixedPoint lattice@(MkLattice _ bottom)  flow@(MkFlow _ w) interf k e j lambF  =
+maximalFixedPoint lattice@(MkLattice _ _ bottom)  flow@(MkFlow _ w) interf k e j lambF  =
     -- Step 1
     let labels = genLabels w
         analysis = M.singleton [] (map (\label -> if  label `elem` e then j else bottom) labels)                       -- set extremal labels to jota, all other labels to bottom.
@@ -31,7 +31,7 @@ maximalFixedPoint lattice@(MkLattice _ bottom)  flow@(MkFlow _ w) interf k e j l
 
 step2 :: Show a => Ord a => L a -> F -> IF -> Int -> [Flow] -> Delta -> LambdaF a -> EmbellishedL a -> EmbellishedL a
 step2 _ _ _ _ [] _ _ analysis = analysis                                                                               -- if W == Nil return analysis
-step2 lattice@(MkLattice join bottom) flow@(MkFlow dir f) interf k (w:ws) delta lambF analysis  =
+step2 lattice@(MkLattice join combine bottom) flow@(MkFlow dir f) interf k (w:ws) delta lambF analysis  =
     let l = if dir == Forward then fstLabel w else sndLabel w
         l' = if dir == Forward then sndLabel w  else fstLabel w
         fl = lambF l False                                                                                             -- get lambda function for label l 
@@ -41,7 +41,7 @@ step2 lattice@(MkLattice join bottom) flow@(MkFlow dir f) interf k (w:ws) delta 
         calls = map getFst interf
         returns = map getThird interf
 
-        normal = if logStep analysis (w:ws) w' l l' labelendproc calls returns delta fl $                                           -- Uncomment to trace algorithm 
+        normal = if --logStep analysis (w:ws) w' l l' labelendproc calls returns delta fl $                                           -- Uncomment to trace algorithm 
                     fl ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)                                    -- check if transfer function over l > l'
                     then step2 lattice flow interf k (w' ++ ws) delta lambF analysis'                                  -- recurse with updated analysis 
                     else step2 lattice flow interf k ws delta lambF analysis                                           -- recurse without updated analysis
@@ -65,14 +65,14 @@ step2 lattice@(MkLattice join bottom) flow@(MkFlow dir f) interf k (w:ws) delta 
                                 else step2 lattice flow interf k ws         delta' lambF initanalysis                                                                       -- continue normally without updating w.
                             else step2 lattice flow interf k ws delta lambF analysis                            
         (Over  (a,b)) -> if -- logStep analysis (w:ws) w' l l' labelendproc calls returns delta fl $
-                            join (flclean ((initanalysis M.! delta')!!(labelendproc))) ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)
+                            combine (flclean ((initanalysis M.! delta')!!(labelendproc))) ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)
                             then step2 lattice flow interf k (w' ++ ws) delta lambF analysisr   
                             else step2 lattice flow interf k ws delta lambF analysis 
         else case w of
         (Intra (a,b)) -> normal
         (Inter (a,b)) -> if  l `elem` calls                                                                                                                                    -- for forward analysis, roles of calls and returns are reversed for backward. 
                             then if -- logStep initanalysis (w:ws) w' l l' labelendproc calls returns delta' fl $  
-                                join (flclean ((initanalysis M.! delta')!!(labelendproc))) ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)
+                                combine (flclean ((initanalysis M.! delta')!!(labelendproc))) ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)
                                 then step2 lattice flow interf k (w' ++ ws) delta lambF analysisr   
                                 else step2 lattice flow interf k ws delta lambF analysis                                                                         -- Uncomment to trace algorithm
                             else step2 lattice flow interf k ws delta lambF analysis                                  
@@ -94,7 +94,7 @@ step3' lambF (MkFlow dir f) analysis = if dir == Forward then zip analysis analy
 --step3 lambF flow analysis = map (step3' lambF flow) $ map snd (M.toList analysis) 
 
 step3 :: LambdaF a -> F -> L a -> EmbellishedL a -> [(a,a)]
-step3 lambF flow (MkLattice join bottom) analysis = step3' lambF flow $ map (\x -> multiJoin x join bottom) (transpose (map snd (M.toList analysis)))
+step3 lambF flow (MkLattice join combine bottom) analysis = step3' lambF flow $ map (\x -> multiJoin x join bottom) (transpose (map snd (M.toList analysis)))
 
 -- May give error for taking tail of empty list if wrong delta values are used.
 updateDelta :: Delta -> Int -> Int -> Delta
