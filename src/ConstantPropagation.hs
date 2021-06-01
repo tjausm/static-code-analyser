@@ -61,9 +61,8 @@ hasBottom []          = False
 hasBottom ((x1, x2):xs) = (x2 == Bottom) || hasBottom xs  
 
 lambdaF :: M.Map Int Block -> M.Map Int String -> M.Map String ([String], String) -> Int -> Int -> Bool -> M.Map String Ztb -> M.Map String Ztb
-lambdaF ib lp params i end True  m = M.filterWithKey (\k a -> not (isPrefixOf (M.findWithDefault "" end lp) k)) $ trace ("CPlambda: " ++ show (transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" end lp) True m params) ++ " m: " ++ show m ) 
-                                                                                                                    (transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) True m params)
-
+lambdaF ib lp params i end True  m = M.filterWithKey (\k a -> not (isPrefixOf (M.findWithDefault "" end lp) k)) $ 
+                                     (transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) True m params)
 lambdaF ib lp params i end False m = transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) False m params  
 
 transferFromBlock' :: Block -> String -> Bool -> M.Map String Ztb -> M.Map String ([String], String) -> M.Map String Ztb
@@ -73,12 +72,12 @@ transferFromBlock' s p b m params = case hasBottom (M.toList m) of
 
 -- String is the enclosing procedure name (empty if none) for the prefix of variables within procedures. 
 transferFromBlock :: Block -> String -> Bool -> M.Map String Ztb -> M.Map String ([String], String) -> M.Map String Ztb
-transferFromBlock (S (IAssign' l n v))     p b m params = if M.member n m 
-                                                             then M.insert n        (analyseExpression p v m) m 
-                                                             else M.insert (p ++ n) (analyseExpression p v m) m 
-transferFromBlock (S (Call' lc lr n ps o)) p b m params = let (ins, out) = fromJust $ params M.!? n in
-                                                            if b  
-                                                                then trace "waarom komen we hier niet? " M.insert o (M.findWithDefault (Int 5) (n ++ out) m) m
+transferFromBlock (S (IAssign' l n v))     p b m params = if M.member n m                                                                                       -- Add the constant value for the variable that is assigned to. 
+                                                             then M.insert n        (analyseExpression p v m) m                                                 -- If we have a global variable with the name use that one.     
+                                                             else M.insert (p ++ n) (analyseExpression p v m) m                                                 -- If we don't use a local variable. 
+transferFromBlock (S (Call' lc lr n ps o)) p b m params = let (ins, out) = fromJust $ params M.!? n in                                                          -- Upon procedure entry (b == False) add the parameters as variables 
+                                                            if b                                                                                                -- initialised with the value passed from the call. Upon return add the    
+                                                                then M.insert o (M.findWithDefault (Int 5) (n ++ out) m) m                                      -- result value to the variable corresponding to the output (o). 
                                                                 else M.insert (n ++ out) Top $
                                                                 foldr (\(x,y) -> M.insert (n ++ x) y) m (zip ins (map (\(I x) -> analyseExpression p x m) ps))                      
 transferFromBlock _                        p b m params = m
@@ -90,7 +89,7 @@ analyseExpression p (Var x)      m = case M.lookup (p ++ x) m of
                                      Nothing     -> case M.lookup x m of 
                                                     Nothing     -> Top
                                                     Just y      -> y
-                                     Just y      -> trace ("p: " ++ show p) y
+                                     Just y      -> y
 analyseExpression p (Plus   l r) m = plus   (analyseExpression p l m) (analyseExpression p r m)
 analyseExpression p (Minus  l r) m = minus  (analyseExpression p l m) (analyseExpression p r m)
 analyseExpression p (Times  l r) m = times  (analyseExpression p l m) (analyseExpression p r m)
@@ -117,6 +116,7 @@ divide (Int a) (Int b) = Int (a `div` b)
 divide Bottom  Bottom  = Bottom
 divide _       _       = Top
 
+-- Show if we have a call block for debugging purposes. 
 showBlock :: Block -> String
 showBlock (S (Call' lc lr n ps o)) = "Call: " ++ show lc ++ show lr ++ show n ++ show ps ++ show o
 showBlock _                        = "No call block"
