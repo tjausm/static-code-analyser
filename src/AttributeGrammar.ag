@@ -135,21 +135,6 @@ sem Stat'
   | Seq'
     lhs.init = @stat1.init
 
-  | Malloc'
-    lhs.init = @label
-
-  | Free'
-    lhs.init = @label
-
-  | RefAssign' 
-    lhs.init = @label
-
-  | Continue'    
-    lhs.init = @label  
-
-  | Break'
-    lhs.init = @label
-
 -- Final
 attr Program' Proc' Stat' [ | | final :: {[Int]} ] 
 
@@ -183,23 +168,8 @@ sem Stat'
   | Seq'
     lhs.final = @stat2.final
 
-  | Malloc'
-    lhs.final = [@label]
-
-  | Free'
-    lhs.final = [@label]
-
-  | RefAssign' 
-    lhs.final = [@label]
-
-  | Continue'    
-    lhs.final = [@label]  
-
-  | Break'
-    lhs.final = [@label]
-
 -- Flow
-attr Program' Procs' Proc' Stat' [ | | flow :: {[Flow]} ]
+attr Program' Procs' Proc' Stat' [ | | flow use {(++))} {[]} :: {[Flow]} ]
 
 sem Program'
   | Program'
@@ -210,15 +180,10 @@ sem Proc'
     lhs.flow = Intra (@labelEntry, @stat.init) : @stat.flow ++ map (\x -> Intra (x, @labelReturn)) @stat.final
 
 sem Procs'
-  | Nil
-    lhs.flow = []
   | Cons
     lhs.flow = @hd.flow ++ @tl.flow      
 
 sem Stat' 
-  | Skip' 
-    lhs.flow = []         
-
   | IfThenElse' 
     lhs.flow = Intra (@labelc, @stat1.init) : Intra (@labelc, @stat2.init) : @stat1.flow ++ @stat2.flow
 
@@ -228,34 +193,12 @@ sem Stat'
   | Call'
     lhs.flow = Over (@labelCall, @labelExit) : (\(x, y) -> Inter (@labelCall, x) : [Inter (y, @labelExit)]) (@lhs.procMapPassDown M.! @name)
     -- Using (!) returns an error if the key is not in the map, but that should not happen.        
-  
-  | IAssign'
-    lhs.flow = []
-
-  | BAssign'
-    lhs.flow = []
 
   | Seq'
     lhs.flow = @stat1.flow ++ @stat2.flow ++ map (\x -> Intra (x, @stat2.init)) @stat1.final
 
-  | Malloc'
-    lhs.flow = []
-
-  | Free'
-    lhs.flow = []
-
-  | RefAssign' 
-    lhs.flow = []
-
-  | Continue'    
-    lhs.flow = []  
-
-  | Break'
-    lhs.flow = []
-
 -- inter-flow
-
-attr Program' Procs' Proc' Stat' [ | | interflow :: {[(Int, Int, Int, Int)]} ]
+attr Program' Procs' Proc' Stat' [ | | interflow use {(++))} {[]} :: {[(Int, Int, Int, Int)]} ]
 
 sem Program'
   | Program'
@@ -266,14 +209,10 @@ sem Proc'
     lhs.interflow = @stat.interflow
 
 sem Procs'
-  | Nil
-    lhs.interflow = []
   | Cons
     lhs.interflow = @hd.interflow ++ @tl.interflow      
 
-sem Stat' 
-  | Skip' 
-    lhs.interflow = []         
+sem Stat'         
 
   | IfThenElse' 
     lhs.interflow = @stat1.interflow ++ @stat2.interflow
@@ -284,30 +223,9 @@ sem Stat'
   | Call'
     lhs.interflow = (\(x, y) -> [(@labelCall, x, y, @labelExit)]) (@lhs.procMapPassDown M.! @name)
     -- Using (!) returns an error if the key is not in the map, but that should not happen.        
-  
-  | IAssign'
-    lhs.interflow = []
-
-  | BAssign'
-    lhs.interflow = []
 
   | Seq'
     lhs.interflow = @stat1.interflow ++ @stat2.interflow
-
-  | Malloc'
-    lhs.interflow = []
-
-  | Free'
-    lhs.interflow = []
-
-  | RefAssign' 
-    lhs.interflow = []
-
-  | Continue'    
-    lhs.interflow = []  
-
-  | Break'
-    lhs.interflow = []
 
 -- map procedureName to input and output parameters 
 
@@ -365,7 +283,7 @@ sem Stat'
 
 -- Get the list of variables used in the program (Var_*)
 
-attr Program' Procs' Proc' Stat' [ | | vars :: {[String]} ]
+attr Program' Procs' Proc' Stat' [ | | vars use {(++))} {[]} :: {[String]} ]
 
 sem Program'
   | Program'
@@ -377,15 +295,10 @@ sem Proc'
     lhs.vars = L.nub (map (\x -> @name ++ x) @stat.vars)
 
 sem Procs'
-  | Nil
-    lhs.vars = []
   | Cons
     lhs.vars = L.nub (@hd.vars ++ @tl.vars)    
 
-sem Stat' 
-  | Skip' 
-    lhs.vars = []         
-
+sem Stat'       
   | IfThenElse' 
     lhs.vars = L.nub (@stat1.vars ++ @stat2.vars)
 
@@ -405,21 +318,6 @@ sem Stat'
 
   | Seq'
     lhs.vars = L.nub (@stat1.vars ++ @stat2.vars) 
-
-  | Malloc'
-    lhs.vars = []
-
-  | Free'
-    lhs.vars = []
-
-  | RefAssign' 
-    lhs.vars = []
-
-  | Continue'    
-    lhs.vars = []  
-
-  | Break'
-    lhs.vars = []
 
 -- LV analysis
 {

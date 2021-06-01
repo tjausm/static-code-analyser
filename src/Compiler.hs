@@ -6,7 +6,7 @@ import AttributeGrammar
 import PrettyPrinter
 import MFP
 import ConstantPropagation
-import LVAnalysis 
+import LVAnalysis
 
 import qualified Data.Map.Internal.Debug as MD
 import qualified Data.Map as M
@@ -32,8 +32,6 @@ compile source = do
   print (final_Syn_Program' synProgram')
   -- Set-up and show Live variable analysis
   putStrLn  "\n LV analysis"
- 
-
   let flow = flow_Syn_Program' synProgram'
   let e = final_Syn_Program' synProgram'
   let i = init_Syn_Program' synProgram'
@@ -43,13 +41,13 @@ compile source = do
   let params = procInOutCollect_Syn_Program' synProgram'
   let bottom = S.fromList $ vars_Syn_Program' synProgram'
   let lambdaF = lvLambda_Syn_Program' synProgram'
-  let jotta = MkSet S.empty 
+  let jotta = MkSet S.empty
   let lpmap = labelProcMapCollect_Syn_Program' synProgram'
 
- -- let lvResult = maximalFixedPoint (lvL jotta) (lvF flow) interflow k e jotta lambdaF 
- -- putStrLn $ showMFP (show . (\(MkSet x) -> x)) lvResult
+  let lvResult = maximalFixedPoint (lvL jotta) (lvF flow) interflow 0 e jotta lambdaF
+  putStrLn $ showMFP (show . (\(MkSet x) -> x)) lvResult
 
   putStrLn "\n Constant Propagation"
   let testcp = constantPropagationAnalysis flow interflow k i vars ibmap lpmap params
-  putStrLn $ showMFP (\x -> show (M.toList x)) testcp
+  putStrLn $ showMFP (show . M.toList) testcp
 
