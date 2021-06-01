@@ -1,22 +1,15 @@
 begin
-    proc root(val n, r, res v) is
-        if r < 1 then
-            v := n;
-        else {
-            call root(n*n, r-1, v);
-        }
+    proc conPass1(val n, res v) is
+        p := n * n;
+        call conPass2(n, v);
     end
-    proc fact(val l, res f) is
-        call factRec(l, l, f);
+    proc conPass2(val n1, res v1) is
+        u := n1 + n1;
+        call doubleUp(n1, v1);
     end
-    proc factRec(val m, t, res b) is
-        if t < 2 then
-            b := m;
-        else {
-            call factRec(m*t, r-1, b);
-        }
+    proc doubleUp(val n2, res v2) is
+        v2 := n2 + n2;
     end
-    x := 32;
-    call fact(32, y);
-    call root(y, 4, z);
+    con := 7;
+    call conPass1(con, r);
 end
