@@ -281,7 +281,7 @@ sem Stat'
     stat1.procMapPassDown = @lhs.procMapPassDown
     stat2.procMapPassDown = @lhs.procMapPassDown
 
--- Get the list of variables used in the program (Var_*)
+-- Get the list of global variables used in the program (Var_*)
 
 attr Program' Procs' Proc' Stat' [ | | vars use {(++))} {[]} :: {[String]} ]
 
@@ -292,7 +292,7 @@ sem Program'
 -- Add procedure name as prefix to variables in procedures for unique names. 
 sem Proc'
   | Proc'
-    lhs.vars = L.nub (map (\x -> @name ++ x) @stat.vars)
+    lhs.vars = [] --L.nub (map (\x -> @name ++ x) @stat.vars)
 
 sem Procs'
   | Cons
@@ -322,8 +322,8 @@ sem Stat'
 -- LV analysis
 {
 data LVSet = MkSet (S.Set String)
-genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> (LVSet -> LVSet)
-genLambda lvGen lvKill l = setToLVSet . (S.union $ recklessLookup l lvGen) . (flip S.difference $ recklessLookup l lvKill) . lvSetToSet
+genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> Bool -> (LVSet -> LVSet)
+genLambda lvGen lvKill l b = setToLVSet . (S.union $ recklessLookup l lvGen) . (flip S.difference $ recklessLookup l lvKill) . lvSetToSet
   where
     recklessLookup k m = case M.lookup k m of
       Nothing -> S.empty
@@ -332,7 +332,7 @@ genLambda lvGen lvKill l = setToLVSet . (S.union $ recklessLookup l lvGen) . (fl
     setToLVSet x = MkSet x
 }
 
-attr Program'       [ | | lvLambda :: { Int -> (LVSet-> LVSet) } ]
+attr Program'       [ | | lvLambda :: { Int -> Bool -> (LVSet-> LVSet) } ]
 attr Stat' Program' [ | | lvKill use {M.union} {M.empty} :: {M.Map Int (S.Set String)}]
 attr Stat' Program' [ | | lvGen use {M.union} {M.empty} ::  {M.Map Int (S.Set String)}]
 attr IExpr BExpr    [ | | freeVars use {S.union} {S.empty} :: {S.Set String}]

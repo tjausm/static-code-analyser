@@ -30,6 +30,9 @@ compile source = do
   print (init_Syn_Program' synProgram')
   putStrLn "Final"
   print (final_Syn_Program' synProgram')
+  putStrLn "Inter-flow"
+  print (interflow_Syn_Program' synProgram')
+
   -- Set-up and show Live variable analysis
   putStrLn  "\n LV analysis"
   let flow = flow_Syn_Program' synProgram'
@@ -44,7 +47,7 @@ compile source = do
   let jotta = MkSet S.empty
   let lpmap = labelProcMapCollect_Syn_Program' synProgram'
 
-  let lvResult = maximalFixedPoint (lvL jotta) (lvF flow) interflow 0 e jotta lambdaF
+  let lvResult = maximalFixedPoint (lvL jotta) (lvF flow) interflow k e jotta lambdaF 
   putStrLn $ showMFP (show . (\(MkSet x) -> x)) lvResult
 
   putStrLn "\n Constant Propagation"
