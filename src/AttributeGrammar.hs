@@ -13,8 +13,8 @@ import qualified Data.List as L
 {-# LINE 323 "AttributeGrammar.ag" #-}
 
 data LVSet = MkSet (S.Set String)
-genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> (LVSet -> LVSet)
-genLambda lvGen lvKill l = setToLVSet . (S.union $ recklessLookup l lvGen) . (flip S.difference $ recklessLookup l lvKill) . lvSetToSet
+genLambda :: M.Map Int (S.Set String) -> M.Map Int (S.Set String) -> Int -> Bool -> (LVSet -> LVSet)
+genLambda lvGen lvKill l b = setToLVSet . (S.union $ recklessLookup l lvGen) . (flip S.difference $ recklessLookup l lvKill) . lvSetToSet
   where
     recklessLookup k m = case M.lookup k m of
       Nothing -> S.empty
@@ -716,7 +716,7 @@ sem_Code_CProgram program'_ =
          _program'IlabelProcMapCollect :: ( M.Map Int String )
          _program'IlvGen :: (M.Map Int (S.Set String))
          _program'IlvKill :: (M.Map Int (S.Set String))
-         _program'IlvLambda :: ( Int -> (LVSet-> LVSet) )
+         _program'IlvLambda :: ( Int -> Bool -> (LVSet-> LVSet) )
          _program'Ipretty :: String
          _program'IprocInOutCollect :: ( M.Map String ([String], String) )
          _program'IprocMapCollect :: ( M.Map String (Int, Int) )
@@ -1328,7 +1328,7 @@ sem_Proc'_Proc' labelEntry_ labelReturn_ name_ inp_ out_ stat_ =
                    )
               _lhsOvars =
                   ({-# LINE 295 "AttributeGrammar.ag" #-}
-                   L.nub (map (\x -> name_ ++ x) _statIvars)
+                   []
                    {-# LINE 1333 "AttributeGrammar.hs" #-}
                    )
               _lhsOlabelBlockMapCollect =
@@ -1695,9 +1695,9 @@ sem_Program' :: (Program') ->
 sem_Program' (Program' _procs _stat) =
     (sem_Program'_Program' (sem_Procs' _procs) (sem_Stat' _stat))
 -- semantic domain
-type T_Program' = ( ([Int]),([Flow]),Int,([(Int, Int, Int, Int)]),( M.Map Int Block ),( M.Map Int String ),(M.Map Int (S.Set String)),(M.Map Int (S.Set String)),( Int -> (LVSet-> LVSet) ),String,( M.Map String ([String], String) ),( M.Map String (Int, Int) ),Program',([String]))
+type T_Program' = ( ([Int]),([Flow]),Int,([(Int, Int, Int, Int)]),( M.Map Int Block ),( M.Map Int String ),(M.Map Int (S.Set String)),(M.Map Int (S.Set String)),( Int -> Bool -> (LVSet-> LVSet) ),String,( M.Map String ([String], String) ),( M.Map String (Int, Int) ),Program',([String]))
 data Inh_Program' = Inh_Program' {}
-data Syn_Program' = Syn_Program' {final_Syn_Program' :: ([Int]),flow_Syn_Program' :: ([Flow]),init_Syn_Program' :: Int,interflow_Syn_Program' :: ([(Int, Int, Int, Int)]),labelBlockMapCollect_Syn_Program' :: ( M.Map Int Block ),labelProcMapCollect_Syn_Program' :: ( M.Map Int String ),lvGen_Syn_Program' :: (M.Map Int (S.Set String)),lvKill_Syn_Program' :: (M.Map Int (S.Set String)),lvLambda_Syn_Program' :: ( Int -> (LVSet-> LVSet) ),pretty_Syn_Program' :: String,procInOutCollect_Syn_Program' :: ( M.Map String ([String], String) ),procMapCollect_Syn_Program' :: ( M.Map String (Int, Int) ),self_Syn_Program' :: Program',vars_Syn_Program' :: ([String])}
+data Syn_Program' = Syn_Program' {final_Syn_Program' :: ([Int]),flow_Syn_Program' :: ([Flow]),init_Syn_Program' :: Int,interflow_Syn_Program' :: ([(Int, Int, Int, Int)]),labelBlockMapCollect_Syn_Program' :: ( M.Map Int Block ),labelProcMapCollect_Syn_Program' :: ( M.Map Int String ),lvGen_Syn_Program' :: (M.Map Int (S.Set String)),lvKill_Syn_Program' :: (M.Map Int (S.Set String)),lvLambda_Syn_Program' :: ( Int -> Bool -> (LVSet-> LVSet) ),pretty_Syn_Program' :: String,procInOutCollect_Syn_Program' :: ( M.Map String ([String], String) ),procMapCollect_Syn_Program' :: ( M.Map String (Int, Int) ),self_Syn_Program' :: Program',vars_Syn_Program' :: ([String])}
 wrap_Program' :: (T_Program') ->
                  (Inh_Program') ->
                  (Syn_Program')
@@ -1717,7 +1717,7 @@ sem_Program'_Program' procs_ stat_ =
          _statOprocMapPassDown :: ( M.Map String (Int, Int) )
          _procsOprocMapPassDown :: ( M.Map String (Int, Int) )
          _lhsOvars :: ([String])
-         _lhsOlvLambda :: ( Int -> (LVSet-> LVSet) )
+         _lhsOlvLambda :: ( Int -> Bool -> (LVSet-> LVSet) )
          _lhsOlvKill :: (M.Map Int (S.Set String))
          _lhsOlvGen :: (M.Map Int (S.Set String))
          _lhsOlabelBlockMapCollect :: ( M.Map Int Block )
