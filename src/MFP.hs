@@ -47,7 +47,7 @@ step2 lattice@(MkLattice join combine bottom) flow@(MkFlow dir f) interf k (w:ws
                     else step2 lattice flow interf k ws delta lambF analysis                                           -- recurse without updated analysis
 
         analysisc = replacelE delta' l' (multiJoin (map (\x -> fl ((analysis M.! delta)!!(x-1))) (getCallLabels interf l')) join bottom) initanalysis   -- fl is applied to original delta value, result is stored in the updated value. 
-        analysisr = replacelE delta l' (join (flclean ((initanalysis M.! delta')!!labelendproc)) ((analysis M.! delta)!!(l-1))) analysis
+        analysisr = replacelE delta l' (join (flclean ((initanalysis M.! delta')!!(labelendproc-1))) ((analysis M.! delta)!!(l-1))) analysis
 
         delta' = updateDelta delta l k
         labelendproc = if dir == Forward then getEndProc l interf else getEndProc l' interf
@@ -65,14 +65,14 @@ step2 lattice@(MkLattice join combine bottom) flow@(MkFlow dir f) interf k (w:ws
                                 else step2 lattice flow interf k ws         delta' lambF initanalysis                                                                       -- continue normally without updating w.
                             else step2 lattice flow interf k ws delta lambF analysis                            
         (Over  (a,b)) -> if -- logStep analysis (w:ws) w' l l' labelendproc calls returns delta fl $
-                            combine (flclean ((initanalysis M.! delta')!!(labelendproc))) ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)
+                            combine (flclean ((initanalysis M.! delta')!!(labelendproc-1))) ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)
                             then step2 lattice flow interf k (w' ++ ws) delta lambF analysisr   
                             else step2 lattice flow interf k ws delta lambF analysis 
         else case w of
         (Intra (a,b)) -> normal
         (Inter (a,b)) -> if  l `elem` calls                                                                                                                                    -- for forward analysis, roles of calls and returns are reversed for backward. 
                             then if -- logStep initanalysis (w:ws) w' l l' labelendproc calls returns delta' fl $  
-                                combine (flclean ((initanalysis M.! delta')!!(labelendproc))) ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)
+                                combine (flclean ((initanalysis M.! delta')!!(labelendproc-1))) ((analysis M.! delta)!!(l-1)) > (analysis M.! delta)!!(l'-1)
                                 then step2 lattice flow interf k (w' ++ ws) delta lambF analysisr   
                                 else step2 lattice flow interf k ws delta lambF analysis                                                                         -- Uncomment to trace algorithm
                             else step2 lattice flow interf k ws delta lambF analysis                                  

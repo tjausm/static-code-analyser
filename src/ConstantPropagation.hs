@@ -55,9 +55,18 @@ combine = M.unionWith elementCombine
 elementCombine :: Ztb -> Ztb -> Ztb
 elementCombine a b = a
 
+hasBottom :: [(String, Ztb)] -> Bool 
+hasBottom []          = False
+hasBottom ((x1, x2):xs) = (x2 == Bottom) || hasBottom xs  
+
 lambdaF :: M.Map Int Block -> M.Map Int String -> M.Map String ([String], String) -> Int -> Bool -> M.Map String Ztb -> M.Map String Ztb
-lambdaF ib lp params i True  m = M.filterWithKey (\k a -> not (isPrefixOf (M.findWithDefault "" i lp) k)) $ (transferFromBlock (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) m params)
-lambdaF ib lp params i False m = transferFromBlock (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) m params  
+lambdaF ib lp params i True  m = M.filterWithKey (\k a -> not (isPrefixOf (M.findWithDefault "" i lp) k)) $ (transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) False m params)
+lambdaF ib lp params i False m = transferFromBlock' (M.findWithDefault (S (Skip' 0)) i ib) (M.findWithDefault "" i lp) True m params  
+
+transferFromBlock' :: Block -> String -> Bool -> M.Map String Ztb -> M.Map String ([String], String) -> M.Map String Ztb
+transferFromBlock' s p b m params = case hasBottom (M.toList m) of 
+                                     True  -> m 
+                                     False -> transferFromBlock s p m params
 
 -- String is the enclosing procedure name (empty if none) for the prefix of variables within procedures. 
 transferFromBlock :: Block -> String -> M.Map String Ztb -> M.Map String ([String], String) -> M.Map String Ztb
