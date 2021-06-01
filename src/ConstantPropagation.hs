@@ -30,8 +30,8 @@ instance {-# OVERLAPPING #-} Ord (M.Map String Ztb) where
                                                              else compare (M.fromList xs) (M.fromList ys) 
 
 constantPropagationAnalysis :: [Flow] -> IF -> Int -> Int -> [String] -> M.Map Int Block -> M.Map Int String -> M.Map String ([String], String) -> [(M.Map String Ztb, M.Map String Ztb)]
-constantPropagationAnalysis fs interf k i vs ibmap lpmap params = maximalFixedPoint (MkLattice join combine (top vs)) (MkFlow Forward fs) 
-                                                                  interf k [i] (bottom vs) (lambdaF ibmap lpmap params)
+constantPropagationAnalysis fs interf k i vs ibmap lpmap params = maximalFixedPoint (MkLattice join combine (bottom vs)) (MkFlow Forward fs) 
+                                                                  interf k [i] (top vs) (lambdaF ibmap lpmap params)
 
 top :: [String] -> M.Map String Ztb
 top vs = M.fromList (zip vs (replicate (length vs) Top))
